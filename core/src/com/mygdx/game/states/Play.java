@@ -1,5 +1,6 @@
 package com.mygdx.game.states;
 
+import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
@@ -25,6 +26,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.handlers.GameStateManager;
 import com.mygdx.game.main.Game;
@@ -41,7 +43,7 @@ import java.util.Stack;
 
 import static com.mygdx.game.handlers.B2DVars.PPM;
 
-public class Play extends GameState implements InputProcessor {
+public class Play extends GameState implements InputProcessor,ApplicationListener {
 
 	private World world;
 	private Box2DDebugRenderer b2dr;
@@ -51,6 +53,7 @@ public class Play extends GameState implements InputProcessor {
 	ArrayList<Body> all;
 	ArrayList<Texture> tall;
 	private OrthographicCamera b2dCam;
+	private OrthographicCamera camera;
 
 	private Body createPhysicBodies(Array<Vector2> input, World world) {
 		System.out.println("Size :" + input.size);
@@ -192,7 +195,7 @@ public class Play extends GameState implements InputProcessor {
 		pixmap.setColor(0, 1, 0, 0.75f);
 		pixmap.fillCircle(32, 32, 32);
 		try {
-			readJson();
+			//readJson();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -252,6 +255,8 @@ public class Play extends GameState implements InputProcessor {
 		sb.begin();
 
 		//sb.draw(img,0,0);
+		cam.update();
+		sb.setProjectionMatrix(cam.combined);
 
 		for (int i = 0; i < tall.size(); i++) {
 			Sprite s = new Sprite(tall.get(i));
@@ -268,8 +273,8 @@ public class Play extends GameState implements InputProcessor {
 							*/
 
 		}
-		Sprite ts = new Sprite(statictexture);
-		ts.draw(sb);
+//		Sprite ts = new Sprite(statictexture);
+//		ts.draw(sb);
 		//pixmaptex= ;
 
 		if (dirty == 1) {
@@ -298,6 +303,16 @@ public class Play extends GameState implements InputProcessor {
 
 	}
 
+	@Override
+	public void pause() {
+
+	}
+
+	@Override
+	public void resume() {
+
+	}
+
 	Texture runtime;
 
 	@Override
@@ -311,8 +326,17 @@ public class Play extends GameState implements InputProcessor {
 	}
 
 	@Override
+	public void create() {
+		cam = new OrthographicCamera();
+		viewport = new FitViewport(Game.V_WIDTH,Game.V_HEIGHT,cam);
+		viewport.apply();
+
+	}
+
+	@Override
 	public void resize(int w, int h) {
-		//	viewport.update(w, h);
+//		viewport.update(w,h);
+		//cam.position.set()
 	}
 
 	@Override
@@ -352,14 +376,16 @@ public class Play extends GameState implements InputProcessor {
 		arr.add(ar.get(ar.size - 1));
 		createPhysicBodies(arr, world);
 	}
-
+	int flag=0;
 	@Override
 	public boolean keyTyped(char character) {
 
-		if (character == 'w') { //it's the 'D' key
+		if (character == 'w'&&flag==0) { //it's the 'D' key
 			world.destroyBody(all.get(all.size() - 1));
 			all.remove(all.size() - 1);
 			tall.remove(tall.size() - 1);
+			if(tall.size()<=0)
+				flag=1;
 		}
 		return true;
 	}
@@ -608,7 +634,7 @@ public class Play extends GameState implements InputProcessor {
 		pixmap.fill();
 		pixmap.setColor(0, 1, 0, 0.75f);
 		JSONParser parser = new JSONParser();
-		Object obj = parser.parse(new FileReader("C:\\Users\\Dell\\Documents\\GitHub\\psy-physics\\core\\src\\com\\mygdx\\game\\levels\\level.json"));
+		Object obj = parser.parse(new FileReader("C:\\Users\\HP\\Documents\\GitHub\\psy-physics\\core\\src\\com\\mygdx\\game\\levels\\level.json"));
 		tttext = new ArrayList<Vector2>();
 
 		JSONObject jsonObject = (JSONObject) obj;

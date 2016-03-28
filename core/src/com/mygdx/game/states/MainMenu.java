@@ -1,5 +1,6 @@
 package com.mygdx.game.states;
 
+import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
@@ -18,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.handlers.GameStateManager;
 import com.mygdx.game.main.Game;
@@ -26,7 +28,7 @@ import com.mygdx.game.view.Button;
 /**
  * Created by Dell on 24-03-2016.
  */
-public class MainMenu extends GameState implements InputProcessor {
+public class MainMenu extends GameState implements InputProcessor,ApplicationListener {
 /*
         imageProvider = game.getImageProvider();
 		imageProvider.load();
@@ -225,6 +227,10 @@ public class MainMenu extends GameState implements InputProcessor {
         currentFrame = drawAnimation.getKeyFrame(stateTime, true);  // #16
         stage.act();
         sb.begin();
+
+        cam.update();
+        sb.setProjectionMatrix(cam.combined);
+
         sb.draw(background, 0, 0);
         sb.draw(wood, 400, 0);
         buttons[0].draw(sb);
@@ -233,6 +239,16 @@ public class MainMenu extends GameState implements InputProcessor {
         sb.draw(logo,10,350);
         //stage.draw();
         sb.end();
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
+
     }
 
     @Override
@@ -247,8 +263,15 @@ public class MainMenu extends GameState implements InputProcessor {
     }
 
     @Override
-    public void resize(int w, int h) {
+    public void create() {
+        cam = new OrthographicCamera();
+        viewport = new FitViewport(Game.V_WIDTH,Game.V_HEIGHT,cam);
+        viewport.apply();
+    }
 
+    @Override
+    public void resize(int w, int h) {
+       // viewport.update(w,h);
     }
 
     @Override
