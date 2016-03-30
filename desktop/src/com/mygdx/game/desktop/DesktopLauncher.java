@@ -7,7 +7,7 @@ import com.mygdx.game.main.Game;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.title = Game.TITLE;
+		config.title = "Psy-Physics";
 		config.width = Game.V_WIDTH;
 		config.height = Game.V_HEIGHT;
 

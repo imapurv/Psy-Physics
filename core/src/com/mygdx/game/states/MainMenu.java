@@ -259,6 +259,8 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
     @Override
     public void dispose() {
         // TODO Auto-generated method stub
+        background.dispose();
+        wood.dispose();
 
     }
 

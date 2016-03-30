@@ -371,7 +371,7 @@ public class Create extends GameState implements InputProcessor {
 
 		// try-with-resources statement based on post comment below :)
 
-		FileWriter file = new FileWriter("C:\\Users\\Dell\\Documents\\GitHub\\psy-physics\\core\\src\\com\\mygdx\\game\\levels\\level.json");
+		FileWriter file = new FileWriter(String.valueOf(Gdx.files.internal("json/level.json")));
 
 		file.write(objs.toString());
 		file.flush();
@@ -520,8 +520,8 @@ public class Create extends GameState implements InputProcessor {
 		touch.y=touch.y*PPM;
 		System.out.println(touch.x+" "+touch.y);
 		System.out.println("Ready ::"+touch.x+" "+touch.y);
-		texturem.add(new Vector2((int) last.x, Gdx.graphics.getHeight() - (int) last.y));
-		texturem.add(new Vector2(touch.x, Gdx.graphics.getHeight() - touch.y));
+		texturem.add(new Vector2((int) last.x, 480 - (int) last.y));
+		texturem.add(new Vector2(touch.x, 480 - touch.y));
 			System.out.println("UReady ::"+touch.x+" "+touch.y);
 			drawLerped(new Vector2((int) last.x, Gdx.graphics.getHeight() - (int) last.y), new Vector2(touch.x, Gdx.graphics.getHeight() - touch.y));
 			last=new Vector2(touch.x, touch.y);
