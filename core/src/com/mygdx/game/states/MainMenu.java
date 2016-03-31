@@ -29,57 +29,57 @@ import com.mygdx.game.view.Button;
  * Created by Dell on 24-03-2016.
  */
 public class MainMenu extends GameState implements InputProcessor,ApplicationListener {
-/*
-        imageProvider = game.getImageProvider();
-		imageProvider.load();
-        backgroundImage = imageProvider.getBackgroundSpring();
-        TextureRegion buttonBg = imageProvider.getButton();
-        buttons = new Button [3];
-        buttons[0] = new Button(buttonBg, imageProvider.getStart());
-        buttons[1] = new Button(buttonBg, imageProvider.getKids());
-        buttons[2] = new Button(buttonBg, imageProvider.getScores());
-        helpButton = new Button(imageProvider.getHelp());
+    /*
+            imageProvider = game.getImageProvider();
+            imageProvider.load();
+            backgroundImage = imageProvider.getBackgroundSpring();
+            TextureRegion buttonBg = imageProvider.getButton();
+            buttons = new Button [3];
+            buttons[0] = new Button(buttonBg, imageProvider.getStart());
+            buttons[1] = new Button(buttonBg, imageProvider.getKids());
+            buttons[2] = new Button(buttonBg, imageProvider.getScores());
+            helpButton = new Button(imageProvider.getHelp());
 
-        soundButtons = new Button[2];
-        soundButtons[0] = new Button(imageProvider.getSoundImage(false));
-        soundButtons[1] = new Button(imageProvider.getSoundImage(true));
+            soundButtons = new Button[2];
+            soundButtons[0] = new Button(imageProvider.getSoundImage(false));
+            soundButtons[1] = new Button(imageProvider.getSoundImage(true));
 
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, imageProvider.getScreenWidth(), imageProvider.getScreenHeight());
-        batch = new SpriteBatch();
+            camera = new OrthographicCamera();
+            camera.setToOrtho(false, imageProvider.getScreenWidth(), imageProvider.getScreenHeight());
+            batch = new SpriteBatch();
 
-        logo = imageProvider.getLogo();
-        logoX = (imageProvider.getScreenWidth() - logo.getRegionWidth())/2;
-        logoY = (imageProvider.getScreenHeight() - logo.getRegionHeight() - 10)-50;
+            logo = imageProvider.getLogo();
+            logoX = (imageProvider.getScreenWidth() - logo.getRegionWidth())/2;
+            logoY = (imageProvider.getScreenHeight() - logo.getRegionHeight() - 10)-50;
 
-        int buttonMargin = 15;
-        int buttonsHeight = 3*buttonMargin;
-        for(int i=0; i<buttons.length; i++) {
-        	buttonsHeight += buttons[i].getRegionHeight();
-        }
+            int buttonMargin = 15;
+            int buttonsHeight = 3*buttonMargin;
+            for(int i=0; i<buttons.length; i++) {
+                buttonsHeight += buttons[i].getRegionHeight();
+            }
 
-        for(int i=buttons.length-1;i>=0;i--) {
-        	int x, y;
-        	x = (imageProvider.getScreenWidth() - buttons[i].getRegionWidth())/2;
-        	if (i == buttons.length - 1) {
-        	y = ((imageProvider.getScreenHeight() - buttonsHeight) / 2) - 10;
-        	}
-        	else {
-        		y = ((int) buttons[i+1].getPosY()) +
-        			buttons[i+1].getRegionHeight() + buttonMargin;
-        	}
-        	buttons[i].setPos(x, y);
-        }
+            for(int i=buttons.length-1;i>=0;i--) {
+                int x, y;
+                x = (imageProvider.getScreenWidth() - buttons[i].getRegionWidth())/2;
+                if (i == buttons.length - 1) {
+                y = ((imageProvider.getScreenHeight() - buttonsHeight) / 2) - 10;
+                }
+                else {
+                    y = ((int) buttons[i+1].getPosY()) +
+                        buttons[i+1].getRegionHeight() + buttonMargin;
+                }
+                buttons[i].setPos(x, y);
+            }
 
-        float x = imageProvider.getScreenWidth() - helpButton.getRegionWidth() - 10;
-        float y = 10;
-        helpButton.setPos(x, y);
+            float x = imageProvider.getScreenWidth() - helpButton.getRegionWidth() - 10;
+            float y = 10;
+            helpButton.setPos(x, y);
 
-        soundButtons[0].setPos(10, 10);
-        soundButtons[1].setPos(10, 10);
+            soundButtons[0].setPos(10, 10);
+            soundButtons[1].setPos(10, 10);
 
-        Gdx.input.setInputProcessor(this);
- */
+            Gdx.input.setInputProcessor(this);
+     */
     private Stage stage; //** stage holds the Button **//
     private BitmapFont font;
     private TextureAtlas buttonsAtlas; //** image of buttons **//
@@ -185,9 +185,9 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         drawAnimation = new Animation(0.15f, drawFrames);
         // TextureRegionDrawable trd=new TextureRegionDrawable(new TextureRegion(new Texture(textSkin.get("backgroundtext"))));
 
-       // Stack stack = new Stack();
+        // Stack stack = new Stack();
 
-       // stack.add(imaget);
+        // stack.add(imaget);
 // creating the group
         /*
         WidgetGroup group = new WidgetGroup();
@@ -273,7 +273,7 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
 
     @Override
     public void resize(int w, int h) {
-       // viewport.update(w,h);
+        // viewport.update(w,h);
     }
 
     @Override
@@ -322,11 +322,11 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         touchPos.set(screenX, screenY, 0);
         camera.unproject(touchPos);
         System.out.println(touchPos.x + " " + touchPos.y);
-      //  System.out.println(buttons[0].isPressed(touchPos));
+        //  System.out.println(buttons[0].isPressed(touchPos));
         System.out.println(touchPos.x + " " + touchPos.y);
         if(buttons[0].isPressed(touchPos)){
             System.out.println("Hwre");
-            gsm.pushState(GameStateManager.PLAY);
+            gsm.pushState(GameStateManager.SELECTLEVEL);
 
         }
         return true;

@@ -371,7 +371,7 @@ public class Create extends GameState implements InputProcessor {
 
 		// try-with-resources statement based on post comment below :)
 
-		FileWriter file = new FileWriter(String.valueOf(Gdx.files.internal("json/level.json")));
+		FileWriter file = new FileWriter(String.valueOf(Gdx.files.internal("json/level3.json")));
 
 		file.write(objs.toString());
 		file.flush();

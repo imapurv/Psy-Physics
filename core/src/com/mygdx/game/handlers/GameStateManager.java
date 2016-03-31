@@ -1,6 +1,7 @@
 package com.mygdx.game.handlers;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.game.levels.selectLevel;
 import com.mygdx.game.main.Game;
 import com.mygdx.game.states.Create;
 import com.mygdx.game.states.GameState;
@@ -18,14 +19,17 @@ public class GameStateManager {
 	public static final int PLAY = 912837;
 	public static final int MENU = 912830;
 	public static final int CREATE = 912831;
+	public static final int SELECTLEVEL = 975234;
+	public static int CURLEVEL = 1;
 	
 	public GameStateManager(Game game) {
 		this.game = game;
 		gameStates = new Stack<GameState>();
 
-		pushState(PLAY);
+		//pushState(PLAY);
 		pushState(MENU);
 		//pushState(CREATE);
+		//pushState(SELECTLEVEL);
 	}
 	
 	public Game game() { return game; }
@@ -41,11 +45,21 @@ public class GameStateManager {
 	public void rendersb(SpriteBatch sb) {
 		gameStates.peek().rendersb(sb);
 	}
-	
+
+	public static int getCURLEVEL() {
+		return CURLEVEL;
+	}
+
+	public static void setCURLEVEL(int CURLEVEL) {
+		GameStateManager.CURLEVEL = CURLEVEL;
+	}
+
 	private GameState getState(int state) {
 		if(state == PLAY) return new Play(this);
-		if(state==MENU) return new MainMenu(this);
-		if(state==CREATE) return new Create(this);
+		if(state == MENU) return new MainMenu(this);
+		if(state == CREATE) return new Create(this);
+
+		if (state == SELECTLEVEL) return new selectLevel(this);
 		return null;
 	}
 	

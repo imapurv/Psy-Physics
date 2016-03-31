@@ -109,7 +109,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		all.add(body);
 		return body;
 	}
-    void ColorPush(){
+	void ColorPush(){
 		col.add(getVal(39, 64, 131));
 		col.add(getVal(196,46,84));
 		col.add(getVal(239,122,42));
@@ -271,17 +271,25 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 
 		// clear screen
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		for (int i = 0; i < all.size(); i++) {
-		if (all.get(i).getPosition().y < -10) {
-			world.destroyBody(all.get(i));
-			all.remove(i);
-			spriteall.get(i).getTexture().dispose();
-			spriteall.remove(i);
 
-		//	tall.get(i).dispose();
-			System.out.println("Removed " + i);
+		//Update level according to the position of ball
+		if (bodycircle.getPosition().y < -10){
+			System.out.println("Update the level");
+			GameStateManager.setCURLEVEL(GameStateManager.getCURLEVEL()+1);
+			gsm.pushState(GameStateManager.PLAY);
 		}
-	}
+
+		for (int i = 0; i < all.size(); i++) {
+			if (all.get(i).getPosition().y < -10) {
+				world.destroyBody(all.get(i));
+				all.remove(i);
+				spriteall.get(i).getTexture().dispose();
+				spriteall.remove(i);
+
+				//	tall.get(i).dispose();
+				System.out.println("Removed " + i);
+			}
+		}
 
 		b2dr.render(world, b2dCam.combined);
 		sb.begin();
@@ -405,11 +413,11 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		Array<Vector2> arr = new Array<Vector2>();
 		Vector2 q = null, r = null;
 
-	//	System.out.println("Array : -");
+		//	System.out.println("Array : -");
 		for (int i = 0; i < ar.size; i++)
 			System.out.println(ar.get(i).x + "|" + ar.get(i).y);
 
-	//	System.out.println("New array : -");
+		//	System.out.println("New array : -");
 		for (int i = 0; i < ar.size - 1; i++) {
 			Vector2 p1 = ar.get(i);
 			Vector2 p2 = ar.get(i + 1);
@@ -420,7 +428,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 			x = (1 * p1.x) / 4 + (3 * p2.x) / 4;
 			y = (1 * p1.y) / 4 + (3 * p2.y) / 4;
 			r = new Vector2(x, y);
-		//	System.out.println(q.x + "|" + q.y + " " + r.x + "|" + r.y);
+			//	System.out.println(q.x + "|" + q.y + " " + r.x + "|" + r.y);
 			arr.add(q);
 			arr.add(r);
 		}
@@ -430,13 +438,15 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	int flag=0;
 	@Override
 	public boolean keyTyped(char character) {
-
+		//if (all.size() > 0)
+		//	flag = 0;
 		if (character == 'w'&&flag==0) { //it's the 'D' key
 			world.destroyBody(all.get(all.size() - 1));
 			all.remove(all.size() - 1);
-			tall.remove(tall.size() - 1);
-			if(tall.size()<=0)
-				flag=1;
+			//tall.remove(tall.size() - 1);
+			//if(all.size()<=0)
+			//	flag=1;
+			spriteall.remove(spriteall.size()-1);
 		}
 		return true;
 	}
@@ -472,7 +482,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 			 */
 			//world.destroyBody(hitBody);
 		}
-	//	System.out.println("Ready ::" + touch.x * PPM + " " + touch.y * PPM);
+		//	System.out.println("Ready ::" + touch.x * PPM + " " + touch.y * PPM);
 		last = new Vector2(touch.x * PPM, touch.y * PPM);
 		touch.x = touch.x * PPM;
 		touch.y = touch.y * PPM;
@@ -509,7 +519,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		updatePoints(ar, world);
 		drawLerped(new Vector2((int) last.x, height - (int) last.y), new Vector2(x, height - y));
 		//pixmap.scaled(1000, 600);
-	//	pixmap.scale
+		//	pixmap.scale
 		pixmaptex = new Texture(pixmap);
 		tall.add(pixmaptex);
 		spriteall.add(new Sprite(pixmaptex));
@@ -533,7 +543,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 				(input.get(0).y / PPM));
 		bodyDef.type = BodyDef.BodyType.DynamicBody;
 		Body body = world.createBody(bodyDef);
-	//	System.out.println(input.size);
+		//	System.out.println(input.size);
 		if (input.size < 2)
 			return;
 		if (input.size <= 3) {
@@ -563,10 +573,10 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		//dirty=0;
 		touch.x = touch.x * PPM;
 		touch.y = touch.y * PPM;
-	//	System.out.println(touch.x + " " + touch.y);
-	//	System.out.println("Ready ::" + touch.x + " " + touch.y);
+		//	System.out.println(touch.x + " " + touch.y);
+		//	System.out.println("Ready ::" + touch.x + " " + touch.y);
 
-	//	System.out.println("UReady ::" + touch.x + " " + touch.y);
+		//	System.out.println("UReady ::" + touch.x + " " + touch.y);
 		//if (Math.sqrt(Math.pow(( last.x - touch.x), 2) + Math.pow((((int) last.y) -  touch.y), 2)) > 2)
 		drawLerped(new Vector2((int) last.x, height - (int) last.y), new Vector2(touch.x, height - touch.y));
 		last = new Vector2(touch.x, touch.y);
@@ -581,11 +591,11 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 
 			//if(count<8)
 			ar.add(new Vector2(x / PPM, y / PPM));
-		//	System.out.println("Last" + last.x + " " + last.y);
+			//	System.out.println("Last" + last.x + " " + last.y);
 			//pixmap.drawLine((int) last.x, Gdx.graphics.getHeight() - (int) last.y, x, Gdx.graphics.getHeight() - y);
 			//drawLerped(new Vector2((int) last.x, Gdx.graphics.getHeight() - (int) last.y), new Vector2(touch.x, Gdx.graphics.getHeight() - touch.y));
 			///pixmap.fillCircle(x, y,5 );
-		//	System.out.println("touch Drr" + x + " " + y);
+			//	System.out.println("touch Drr" + x + " " + y);
 
 		}
 		//pi.drawCircle(x % 100, x%100, 3);
@@ -679,7 +689,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	}
 
 	public ArrayList<Vector2> tttext;
-    public ArrayList<Color> col;
+	public ArrayList<Color> col;
 	public Texture statictexture;
 
 	void readJson() throws Exception {
@@ -690,7 +700,24 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		pixmap.setColor(getVal(157,124,79));
 		JSONParser parser = new JSONParser();
 		System.out.println("Oneeee");
-		FileHandle fileHandle = Gdx.files.internal("json/level2.json");
+
+		//Check level to be displayed
+		String selLev = "json/level1.json";
+/*
+		FileHandle readF = Gdx.files.internal("json/curlevel.txt");
+		String lno;
+		lno = readF.readString();
+		int ln = Integer.parseInt(lno);
+*/
+		int ln = GameStateManager.getCURLEVEL();
+		if (ln == 2)
+			selLev = "json/level2.json";
+		if (ln == 3)
+			selLev = "json/level3.json";
+		if (ln == 4)
+			selLev = "json/level4.json";
+
+		FileHandle fileHandle = Gdx.files.internal(selLev);
 		String s = new String(fileHandle.readString());
 		Object obj = parser.parse(s);
 		System.out.println("Twoooo");
@@ -746,7 +773,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 				String tp = tmp.substring(j, tmp.indexOf(']', j));
 				j = tmp.indexOf(']', j);
 				// System.out.println(tp);
-				 System.out.println(tp.substring(1,tp.indexOf(','))+" "+tp.substring(tp.indexOf(','),tp.indexOf(')')));
+				System.out.println(tp.substring(1,tp.indexOf(','))+" "+tp.substring(tp.indexOf(','),tp.indexOf(')')));
 
 				float x = Float.parseFloat(tp.substring(1, tp.indexOf(',')));
 				float y = Float.parseFloat(tp.substring(tp.indexOf(',') + 1, tp.indexOf(')')));
