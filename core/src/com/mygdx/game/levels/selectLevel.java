@@ -19,7 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.handlers.GameStateManager;
 import com.mygdx.game.main.Game;
@@ -64,7 +64,7 @@ public class selectLevel extends GameState implements InputProcessor,Application
 
 
 
-        stage = new Stage();        //** window is stage **//
+        stage = new Stage(new StretchViewport(800, 480));        //** window is stage **//
         stage.clear();
         Gdx.input.setInputProcessor(stage); //** stage is responsive **//
 
@@ -95,7 +95,7 @@ public class selectLevel extends GameState implements InputProcessor,Application
                 }
 
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    GameStateManager.setCURLEVEL(g+1);
+                    GameStateManager.setCURLEVEL(g + 1);
                     gsm.pushState(GameStateManager.PLAY);
                 }
             });
@@ -133,7 +133,7 @@ public class selectLevel extends GameState implements InputProcessor,Application
         cam.update();
         sb.setProjectionMatrix(cam.combined);
         sb.begin();
-        sb.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        sb.draw(background, 0, 0, 800,480);
 
         //buttons[0].draw(sb);
         //buttons[1].draw(sb);
@@ -170,13 +170,12 @@ public class selectLevel extends GameState implements InputProcessor,Application
     @Override
     public void create() {
         cam = new OrthographicCamera();
-        viewport = new FitViewport(Game.V_WIDTH,Game.V_HEIGHT,cam);
-        viewport.apply();
+       // viewport = new FitViewport(Game.V_WIDTH,Game.V_HEIGHT,cam);
+      //  viewport.apply();
     }
 
     @Override
     public void resize(int w, int h) {
-
     }
 
     @Override
