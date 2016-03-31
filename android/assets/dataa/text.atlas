@@ -30,4 +30,11 @@ credit
     orig:  0,0
     offset: 0, 0
     index: -1
+exit
+    rotate: false
+    xy: 610, 100
+    size: 130,64
+    orig:  0,0
+    offset: 0, 0
+    index: -1
 

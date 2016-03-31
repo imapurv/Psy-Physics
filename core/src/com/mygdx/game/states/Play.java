@@ -20,15 +20,21 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.game.handlers.B2DVars;
 import com.mygdx.game.handlers.GameStateManager;
 import com.mygdx.game.main.Game;
 
@@ -66,6 +72,48 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		bodyDef.type = BodyType.DynamicBody;
 		//System.out.println();
 		Body body = world.createBody(bodyDef);
+
+		//Detecting collision
+		world.setContactListener(new ContactListener() {
+			@Override
+			public void beginContact(Contact contact) {
+				if((contact.getFixtureA().getBody() == bodycircle &&
+						contact.getFixtureB().getBody() == bstar)
+						||
+						(contact.getFixtureA().getBody() == bstar &&
+								contact.getFixtureB().getBody() == bodycircle)) {
+					System.out.println("Here collision");
+					bstar.applyForceToCenter(new Vector2(50, 0), true);
+					Timer.schedule(new Timer.Task() {
+						@Override
+						public void run() {
+							// Do your work
+							GameStateManager.setCURLEVEL(GameStateManager.getCURLEVEL() + 1);
+							gsm.pushState(GameStateManager.PLAY);
+						}
+					}, 2);
+
+				}
+			}
+
+			@Override
+			public void endContact(Contact contact) {
+
+			}
+
+			@Override
+			public void preSolve(Contact contact, Manifold oldManifold) {
+
+			}
+
+			@Override
+			public void postSolve(Contact contact, ContactImpulse impulse) {
+
+			}
+		});
+
+
+
 		for (int i = 0; i < input.size - 1; i++) {
 			Vector2 point = input.get(i);
 			Vector2 dir = input.get(i + 1).cpy().sub(point);
@@ -88,15 +136,19 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 
 				PolygonShape shape = new PolygonShape();
 
-				shape.setAsBox(distance / 2, 2 / PPM, dir.cpy()
+				shape.setAsBox(distance / 2, 3.5f / PPM, dir.cpy()
 						.scl(0.5f).add(point), angle);
 				FixtureDef fixtureDef = new FixtureDef();
 				fixtureDef.shape = shape;
-				float den = (float) .02 * input.size;
-				if (den > 1.00) den = 1;
+				float den = (float) circum/3000;
+				System.out.println("Circumference "+circum);
+				System.out.println("Density "+den);
+				if (den > 1.0f) den = 1;
 				fixtureDef.density = den;
 				fixtureDef.friction = 0.2f;
 				fixtureDef.restitution = 0.2f; // Make it bounce a little bit
+				fixtureDef.filter.categoryBits = B2DVars.DYNAMIC;
+				fixtureDef.filter.maskBits = B2DVars.BALL|B2DVars.STATIC|B2DVars.DYNAMIC;
 
 				body.createFixture(fixtureDef);
 				shape.dispose();
@@ -127,12 +179,13 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	}
 	Body bodycircle;
 	int dirty = 0;
-	Texture img;
+	Texture img,tstar;
 	Texture ball;
-
+	Body bstar;
 	public Play(GameStateManager gsm) {
 
 		super(gsm);
+		tstar=  new Texture(Gdx.files.internal("dataa/star.png"));
 		img = new Texture(Gdx.files.internal("data/whiteback.jpg"));
 		ball =new Texture(Gdx.files.internal("dataa/ball.png"));
 		world = new World(new Vector2(0, -9.81f), true);
@@ -172,6 +225,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		shapes.setAsBox(50 / PPM, 120 / PPM);
 		FixtureDef fdefs = new FixtureDef();
 		fdefs.shape = shapes;
+
 		//bodys.createFixture(fdefs);
 
 
@@ -180,7 +234,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
 		bodyDef.type = BodyType.DynamicBody;
 // Set our body's starting position in the world
-		bodyDef.position.set(670 / PPM, 250 / PPM);
+		bodyDef.position.set(170 / PPM, 350 / PPM);
 		bodycircle = world.createBody(bodyDef);
 		Sprite bls=new Sprite(ball);
 		bls.setSize(55,55);
@@ -195,13 +249,34 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		fixtureDef.density = 0.05f;
 		fixtureDef.friction = 0.1f;
 		fixtureDef.restitution = 0.0f; // Make it bounce a little bit
-
+		fixtureDef.filter.categoryBits = B2DVars.BALL;
+		fixtureDef.filter.maskBits = B2DVars.STATIC|B2DVars.DYNAMIC|B2DVars.STAR;
 // Create our fixture and attach it to the body
 		Fixture fixture = bodycircle.createFixture(fixtureDef);
 
 // Remember to dispose of any shapes after you're done with them!
 // BodyDef and FixtureDef don't need disposing, but shapes do.
 		circle.dispose();
+
+		BodyDef star = new BodyDef();
+// We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
+		star.type = BodyType.DynamicBody;
+// Set our body's starting position in the world
+		star.position.set(670/ PPM, 210 / PPM);
+		bstar= world.createBody(star);
+
+		PolygonShape sshape = new PolygonShape();
+		sshape.setAsBox(25 / PPM, 25 / PPM);
+		FixtureDef sfdef = new FixtureDef();
+		sfdef.density = 0.1f;
+		sfdef.shape = sshape;
+		sfdef.filter.categoryBits = B2DVars.STAR;
+		sfdef.filter.maskBits = B2DVars.BALL|B2DVars.STATIC;
+		bstar.createFixture(sfdef);
+		Sprite tls=new Sprite(tstar);
+		tls.setSize(55, 55);
+		bstar.setUserData(tls);
+
 		// create falling box
 		/*
 		bdef.position.set(160 / PPM, 200 / PPM);
@@ -266,18 +341,23 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	Pixmap pixmap = new Pixmap(64, 64, Pixmap.Format.RGBA8888);
 	Texture pixmaptex;
 	Sprite sss;
+	public static Sprite starsp,ballsp;
 	public void render() {
 
 
 		// clear screen
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+
+
 		//Update level according to the position of ball
 		if (bodycircle.getPosition().y < -10){
 			System.out.println("Update the level");
-			GameStateManager.setCURLEVEL(GameStateManager.getCURLEVEL()+1);
+			//GameStateManager.setCURLEVEL(GameStateManager.getCURLEVEL()+1);
 			gsm.pushState(GameStateManager.PLAY);
 		}
+
+
 
 		for (int i = 0; i < all.size(); i++) {
 			if (all.get(i).getPosition().y < -10) {
@@ -294,7 +374,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		b2dr.render(world, b2dCam.combined);
 		sb.begin();
 
-		sb.draw(img, 0, 0);
+		//sb.draw(img, 0, 0);
 		cam.update();
 		sb.setProjectionMatrix(cam.combined);
 		try {
@@ -319,15 +399,25 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		catch (Exception e){}
 		Sprite ts = new Sprite(statictexture);
 		ts.draw(sb);
-		sss = (Sprite) bodycircle.getUserData();
+		ballsp = (Sprite) bodycircle.getUserData();
 		//Vector2 bottlePos = bodycircle.getPosition();
-		sss.setOrigin(sss.getWidth()/2,sss.getHeight()/2);
+		ballsp.setOrigin(ballsp.getWidth() / 2, ballsp.getHeight() / 2);
 		//sss.setOrigin(bodycircle.getWorldCenter().x * PPM, bodycircle.getWorldCenter().y * PPM);
 		//sss.setOrigin(sss.getWidth()/2,sss.getHeight()/2);
-		sss.setPosition(bodycircle.getPosition().x* PPM - sss.getWidth()/2, bodycircle.getPosition().y* PPM - sss.getHeight()/2);
+		ballsp.setPosition(bodycircle.getPosition().x * PPM - ballsp.getWidth() / 2, bodycircle.getPosition().y * PPM - ballsp.getHeight() / 2);
 		//sss.setBounds(0,0,100,100);
-		sss.setRotation((float) bodycircle.getAngle() * MathUtils.radiansToDegrees);
-		sss.draw(sb);
+		ballsp.setRotation((float) bodycircle.getAngle() * MathUtils.radiansToDegrees);
+		ballsp.draw(sb);
+
+		starsp = (Sprite) bstar.getUserData();
+		//Vector2 bottlePos = bodycircle.getPosition();
+		starsp.setOrigin(starsp.getWidth()/2,starsp.getHeight()/2);
+		//sss.setOrigin(bodycircle.getWorldCenter().x * PPM, bodycircle.getWorldCenter().y * PPM);
+		//sss.setOrigin(sss.getWidth()/2,sss.getHeight()/2);
+		starsp.setPosition(bstar.getPosition().x* PPM - starsp.getWidth()/2, bstar.getPosition().y* PPM - starsp.getHeight()/2);
+		//sss.setBounds(0,0,100,100);
+		starsp.setRotation((float)bstar.getAngle() * MathUtils.radiansToDegrees);
+		starsp.draw(sb);
 
 		//pixmaptex= ;
 
@@ -459,7 +549,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		Vector3 touch = new Vector3();
 
 		b2dCam.unproject(touch.set(screenX, screenY, 0));
-
+		circum = 0;
 		testPoint.set(x, y, 0);
 		b2dCam.unproject(testPoint);
 
@@ -516,7 +606,8 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		x = (int) touch.x;
 		y = (int) (touch.y);
 		ar.add(new Vector2(x / PPM, y / PPM));
-		updatePoints(ar, world);
+		//updatePoints(ar, world);
+		createPhysicBodies(ar,world);
 		drawLerped(new Vector2((int) last.x, height - (int) last.y), new Vector2(x, height - y));
 		//pixmap.scaled(1000, 600);
 		//	pixmap.scale
@@ -565,7 +656,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	int x = 0, y = 0;
 	Array<Vector2> ar;
 	int count = 0;
-
+	int circum=0;
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
 		Vector3 touch = new Vector3();
@@ -579,6 +670,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		//	System.out.println("UReady ::" + touch.x + " " + touch.y);
 		//if (Math.sqrt(Math.pow(( last.x - touch.x), 2) + Math.pow((((int) last.y) -  touch.y), 2)) > 2)
 		drawLerped(new Vector2((int) last.x, height - (int) last.y), new Vector2(touch.x, height - touch.y));
+		circum+=new Vector2((int) last.x, height - (int) last.y).dst2(new Vector2(touch.x, height - touch.y));
 		last = new Vector2(touch.x, touch.y);
 
 
@@ -676,7 +768,8 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 				fixtureDef.density = 0.4f;
 				fixtureDef.friction = 0.2f;
 				fixtureDef.restitution = 0.2f; // Make it bounce a little bit
-
+				fixtureDef.filter.categoryBits = B2DVars.STATIC;
+				fixtureDef.filter.maskBits = B2DVars.BALL|B2DVars.DYNAMIC|B2DVars.STAR;
 				body.createFixture(fixtureDef);
 				shape.dispose();
 			} catch (Exception E) {

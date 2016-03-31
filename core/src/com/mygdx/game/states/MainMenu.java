@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.game.actors.MyActor;
 import com.mygdx.game.handlers.GameStateManager;
 import com.mygdx.game.main.Game;
 import com.mygdx.game.view.Button;
@@ -85,7 +86,7 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
     private TextureAtlas buttonsAtlas; //** image of buttons **//
     private Skin buttonSkin,textSkin; //** images are used as skins of the button **//
     private TextButton button;
-    TextureRegion logo,play,credit;
+    TextureRegion logo,play,credit,exit;
     Table root;
     float stateTime;
     TextureRegion                   currentFrame;           // #7
@@ -160,11 +161,11 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
 
 
         MoveToAction moveAction = new MoveToAction();//Add dynamic movement effects to button
-        moveAction.setPosition(Gdx.graphics.getWidth() / 2 - button.getWidth() / 2, Gdx.graphics.getHeight() / 2 + Gdx.graphics.getHeight() / 6);
+        moveAction.setPosition(10, 10);
         moveAction.setDuration(.5f);
-        button.addAction(moveAction);
-        stage.addActor(root);
-        root.debug();
+       // button.addAction(moveAction);
+        //stage.addActor(root);
+       // root.debug();
 
 
 
@@ -172,13 +173,18 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         logo=new TextureRegion(textatlas.findRegion("backgroundtext"));
         play=new TextureRegion(textatlas.findRegion("play"));
         credit=new TextureRegion(textatlas.findRegion("credit"));
-
+        exit=new TextureRegion(textatlas.findRegion("exit"));
         buttons = new Button [3];
         buttons[0] = new Button(play);
 
         buttons[0].setPos(525,200);
+        buttons[1] = new Button(credit);
+        buttons[1].setPos(525,140);
         drawFrames = new TextureRegion[25];
+        buttons[2] = new Button(exit);
 
+
+        buttons[2].setPos(525,80);
         for(int i=1;i<=25;i++){
             drawFrames[i-1]=new TextureRegion(new Texture(Gdx.files.internal("anim/"+i+".png")));
         }
@@ -198,12 +204,16 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         root.setBounds(0, 0, Gdx.graphics.getWidth(), 50);
         root.debug().left().top().add(group);
         */
-
+        MoveToAction moveActions = new MoveToAction();
+        moveActions.setPosition(10, 350);
+        moveActions.setDuration(.2f);
 
         //image.setScaling(Scaling.fill);
         //root.add(imaget).height(200).fill(400,100);
+        MyActor my=new MyActor();
 
-        stage.addActor(button);
+        my.addAction(moveActions);
+        stage.addActor(my);
         Gdx.input.setInputProcessor(this);
     }
 
@@ -234,10 +244,16 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         sb.draw(background, 0, 0);
         sb.draw(wood, 400, 0);
         buttons[0].draw(sb);
-        sb.draw(currentFrame, 50, 50,500,200);
-        sb.draw(credit,525,140);
-        sb.draw(logo,10,350);
+        buttons[1].draw(sb);
+        buttons[2].draw(sb);
+        sb.draw(currentFrame, 50, 50, 500,200);
+
+
         //stage.draw();
+        sb.end();
+
+        sb.begin();
+        stage.draw();
         sb.end();
     }
 
@@ -327,6 +343,16 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         if(buttons[0].isPressed(touchPos)){
             System.out.println("Hwre");
             gsm.pushState(GameStateManager.SELECTLEVEL);
+
+        }
+        if(buttons[1].isPressed(touchPos)){
+            System.out.println("Hwre");
+            gsm.pushState(GameStateManager.CREDITS);
+
+        }
+        if(buttons[2].isPressed(touchPos)){
+            System.out.println("Hwre");
+            Gdx.app.exit();
 
         }
         return true;

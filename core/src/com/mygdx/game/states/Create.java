@@ -100,12 +100,14 @@ public class Create extends GameState implements InputProcessor {
 	}
 
 	Body bodycircle;
+	Body bstar;
 	int dirty=0;
-	Texture img;
+	Texture img,tstar;
 	public Create(GameStateManager gsm) {
 
 		super(gsm);
 		img = new Texture(Gdx.files.internal("data/whiteback.jpg"));
+		tstar=  new Texture(Gdx.files.internal("dataa/star.png"));
 		world = new World(new Vector2(0, -9.81f), true);
 		b2dr = new Box2DDebugRenderer();
 		ar=new Array<Vector2>();
@@ -154,7 +156,7 @@ public class Create extends GameState implements InputProcessor {
 // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
 		bodyDef.type = BodyType.DynamicBody;
 // Set our body's starting position in the world
-		bodyDef.position.set(670 / PPM, 210 / PPM);
+		bodyDef.position.set(170 / PPM, 210 / PPM);
 		bodycircle= world.createBody(bodyDef);
 
 // Create a circle shape and set its radius to 6
@@ -174,6 +176,10 @@ public class Create extends GameState implements InputProcessor {
 // Remember to dispose of any shapes after you're done with them!
 // BodyDef and FixtureDef don't need disposing, but shapes do.
 		circle.dispose();
+
+		//
+
+		//bstar.setUserData();
 		// create falling box
 		/*
 		bdef.position.set(160 / PPM, 200 / PPM);
@@ -371,7 +377,7 @@ public class Create extends GameState implements InputProcessor {
 
 		// try-with-resources statement based on post comment below :)
 
-		FileWriter file = new FileWriter(String.valueOf(Gdx.files.internal("json/level3.json")));
+		FileWriter file = new FileWriter(String.valueOf(Gdx.files.internal("json/level1.json")));
 
 		file.write(objs.toString());
 		file.flush();
@@ -381,6 +387,7 @@ public class Create extends GameState implements InputProcessor {
 		System.out.println("\nJSON Object: " + objs);
 
 	}
+	int tflag=0;
 	@Override
 	public boolean keyTyped(char character) {
 
@@ -388,6 +395,9 @@ public class Create extends GameState implements InputProcessor {
 			world.destroyBody(all.get(all.size()-1));
 			all.remove(all.size() - 1);
 			tall.remove(tall.size()-1);
+		}
+		if(character =='t'){
+			tflag=1;
 		}
 		if(character=='d'){
 			try {
@@ -464,6 +474,7 @@ public class Create extends GameState implements InputProcessor {
 			y = (int) (touch.y);
 		ar.add(new Vector2(x / PPM, y / PPM));
 		createPhysicBodiesStatic(ar, world);
+		if(tflag==0)
 		bodym.add(iit++,new Array<Vector2>(ar));
 		//bodym.add(new Array<Vector2>(ar));
 		//updatePoints(ar, world);

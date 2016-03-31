@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.levels.selectLevel;
 import com.mygdx.game.main.Game;
 import com.mygdx.game.states.Create;
+import com.mygdx.game.states.Credits;
 import com.mygdx.game.states.GameState;
 import com.mygdx.game.states.MainMenu;
 import com.mygdx.game.states.Play;
@@ -20,6 +21,7 @@ public class GameStateManager {
 	public static final int MENU = 912830;
 	public static final int CREATE = 912831;
 	public static final int SELECTLEVEL = 975234;
+	public static final int CREDITS = 912832;
 	public static int CURLEVEL = 1;
 	
 	public GameStateManager(Game game) {
@@ -58,7 +60,7 @@ public class GameStateManager {
 		if(state == PLAY) return new Play(this);
 		if(state == MENU) return new MainMenu(this);
 		if(state == CREATE) return new Create(this);
-
+		if(state==CREDITS) return new Credits(this);
 		if (state == SELECTLEVEL) return new selectLevel(this);
 		return null;
 	}
