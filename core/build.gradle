@@ -10,4 +10,5 @@ dependencies {
     compile files('C:/Users/Dell/Documents/GitHub/psy-physics/android/libs/json-simple-1.1.jar')
     compile files('C:/Users/HP/Documents/GitHub/Psy-Physics/android/libs/json-simple-1.1.jar')
     compile files('C:/Users/HP/Documents/GitHub/Psy-Physics/android/libs/org.json.jar')
+    compile files('C:/Users/Dell/Documents/GitHub/psy-physics/android/libs/gdx-stb-truetype.jar')
 }

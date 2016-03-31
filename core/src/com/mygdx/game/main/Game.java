@@ -16,7 +16,7 @@ public class Game implements ApplicationListener {
 	
 	public static final float STEP = 1 / 60f;
 	private float accum;
-	Music rainMusic;
+	public static Music rainMusic;
 	private SpriteBatch sb;
 	private OrthographicCamera cam;
 	private OrthographicCamera hudCam;

@@ -213,7 +213,7 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         MyActor my=new MyActor();
 
         my.addAction(moveActions);
-        stage.addActor(my);
+       // stage.addActor(my);
         Gdx.input.setInputProcessor(this);
     }
 
@@ -247,7 +247,7 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         buttons[1].draw(sb);
         buttons[2].draw(sb);
         sb.draw(currentFrame, 50, 50, 500,200);
-
+        sb.draw(logo, 10,350);
 
         //stage.draw();
         sb.end();

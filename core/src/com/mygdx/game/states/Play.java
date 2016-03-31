@@ -12,6 +12,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -30,6 +32,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -37,6 +40,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.handlers.B2DVars;
 import com.mygdx.game.handlers.GameStateManager;
 import com.mygdx.game.main.Game;
+import com.mygdx.game.view.Button;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -54,7 +58,6 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 
 	private World world;
 	private Box2DDebugRenderer b2dr;
-	BitmapFont font;
 	SpriteBatch sb;
 	Stack<Body> undo;
 	ArrayList<Body> all;
@@ -66,8 +69,10 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 
 	private Body createPhysicBodies(Array<Vector2> input, World world) {
 		System.out.println("Size :" + input.size);
-		if (input.size <= 2)
+		if (input.size <= 2) {
+
 			return null;
+		}
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DynamicBody;
 		//System.out.println();
@@ -138,8 +143,8 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 					continue;
 				if (Math.abs(distance - 1.1920929E-7) < 0.001)
 					continue;
-				//	if(distance<1.1)
-				//		continue;
+				// if(distance<1.1)
+				//    continue;
 
 				float angle = dir.angle() * MathUtils.degreesToRadians;
 
@@ -192,9 +197,36 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	Texture img,tstar;
 	Texture ball;
 	Body bstar;
+
+	public Button buttons[];
+	private TextureRegion soundon,soundoff,back,menu;
+	private TextureAtlas textatlas;
+	private BitmapFont font;
+	private Skin textSkin;
+
 	public Play(GameStateManager gsm) {
 
 		super(gsm);
+
+		textatlas = new TextureAtlas("dataa/tools.atlas");
+		textSkin= new Skin();
+		textSkin.addRegions(textatlas);
+		font = new BitmapFont(Gdx.files.internal("data/arial-15.fnt"),false); //** font **//
+
+		soundon=new TextureRegion(textatlas.findRegion("volon"));
+		soundoff=new TextureRegion(textatlas.findRegion("voloff"));
+		back = new TextureRegion(textatlas.findRegion("undo"));
+		menu=new TextureRegion(textatlas.findRegion("menu"));
+
+		buttons = new Button[5];
+		buttons[0] = new Button(soundon);
+		buttons[0].setPos(10, 400);
+		buttons[1] = new Button(back);
+		buttons[1].setPos(680, 400);
+		buttons[2] = new Button(menu);
+		buttons[2].setPos(750, 400);
+
+
 		end=new Texture(Gdx.files.internal("dataa/levelcom.png"));
 		tstar=  new Texture(Gdx.files.internal("dataa/star.png"));
 		img = new Texture(Gdx.files.internal("data/whiteback.jpg"));
@@ -289,15 +321,15 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		bstar.setUserData(tls);
 
 		// create falling box
-		/*
-		bdef.position.set(160 / PPM, 200 / PPM);
-		bdef.type = BodyType.DynamicBody;
-		body = world.createBody(bdef);
-		
-		shape.setAsBox(20 / PPM, 20 / PPM);
-		fdef.shape = shape;
-		body.createFixture(fdef);
-		*/
+      /*
+      bdef.position.set(160 / PPM, 200 / PPM);
+      bdef.type = BodyType.DynamicBody;
+      body = world.createBody(bdef);
+      
+      shape.setAsBox(20 / PPM, 20 / PPM);
+      fdef.shape = shape;
+      body.createFixture(fdef);
+      */
 		ColorPush();
 		// set up box2d cam
 		//b2dCam = new PerspectiveCamera();
@@ -377,7 +409,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 				spriteall.get(i).getTexture().dispose();
 				spriteall.remove(i);
 
-				//	tall.get(i).dispose();
+				// tall.get(i).dispose();
 				System.out.println("Removed " + i);
 			}
 		}
@@ -399,11 +431,11 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 				sss.draw(sb);
 
 /*
-			sb.draw(s, s.getX(), s.getY(),s.getOriginX(),
-					s.getOriginY(),
-					s.getWidth(),s.getHeight(),s.getScaleX(),s.
-							getScaleY(),s.getRotation());
-							*/
+         sb.draw(s, s.getX(), s.getY(),s.getOriginX(),
+               s.getOriginY(),
+               s.getWidth(),s.getHeight(),s.getScaleX(),s.
+                     getScaleY(),s.getRotation());
+                     */
 
 			}
 		}
@@ -417,20 +449,26 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		//sss.setOrigin(sss.getWidth()/2,sss.getHeight()/2);
 		ballsp.setPosition(bodycircle.getPosition().x * PPM - ballsp.getWidth() / 2, bodycircle.getPosition().y * PPM - ballsp.getHeight() / 2);
 		//sss.setBounds(0,0,100,100);
-		ballsp.setRotation((float) bodycircle.getAngle() * MathUtils.radiansToDegrees);
+		//ballsp.setRotation((float) bodycircle.getAngle() * MathUtils.radiansToDegrees);
 		ballsp.draw(sb);
 
 		starsp = (Sprite) bstar.getUserData();
 		//Vector2 bottlePos = bodycircle.getPosition();
-		starsp.setOrigin(starsp.getWidth()/2,starsp.getHeight()/2);
+		starsp.setOrigin(starsp.getWidth() / 2, starsp.getHeight() / 2);
 		//sss.setOrigin(bodycircle.getWorldCenter().x * PPM, bodycircle.getWorldCenter().y * PPM);
 		//sss.setOrigin(sss.getWidth()/2,sss.getHeight()/2);
-		starsp.setPosition(bstar.getPosition().x* PPM - starsp.getWidth()/2, bstar.getPosition().y* PPM - starsp.getHeight()/2);
+		starsp.setPosition(bstar.getPosition().x * PPM - starsp.getWidth() / 2, bstar.getPosition().y * PPM - starsp.getHeight() / 2);
 		//sss.setBounds(0,0,100,100);
 		starsp.setRotation((float)bstar.getAngle() * MathUtils.radiansToDegrees);
 		starsp.draw(sb);
 
 		//pixmaptex= ;
+
+		buttons[0].draw(sb);
+		buttons[1].draw(sb);
+		buttons[2].draw(sb);
+
+
 
 		if (dirty == 1) {
 			//Pixmap p=pixmap;
@@ -500,7 +538,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 
 	@Override
 	public void resize(int w, int h) {
-//		viewport.update(w,h);
+//    viewport.update(w,h);
 		//cam.position.set()
 	}
 
@@ -519,11 +557,11 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		Array<Vector2> arr = new Array<Vector2>();
 		Vector2 q = null, r = null;
 
-		//	System.out.println("Array : -");
+		// System.out.println("Array : -");
 		for (int i = 0; i < ar.size; i++)
 			System.out.println(ar.get(i).x + "|" + ar.get(i).y);
 
-		//	System.out.println("New array : -");
+		// System.out.println("New array : -");
 		for (int i = 0; i < ar.size - 1; i++) {
 			Vector2 p1 = ar.get(i);
 			Vector2 p2 = ar.get(i + 1);
@@ -534,7 +572,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 			x = (1 * p1.x) / 4 + (3 * p2.x) / 4;
 			y = (1 * p1.y) / 4 + (3 * p2.y) / 4;
 			r = new Vector2(x, y);
-			//	System.out.println(q.x + "|" + q.y + " " + r.x + "|" + r.y);
+			// System.out.println(q.x + "|" + q.y + " " + r.x + "|" + r.y);
 			arr.add(q);
 			arr.add(r);
 		}
@@ -577,18 +615,18 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		if (hitBody != null) {
 			//System.out.println("Found Body");
 			//hitBody.applyForceToCenter(new Vector2(-5, 0), true);
-			/*
-			Array<Body> bodies = new Array<Body>();
-			world.getBodies(bodies);
-    			for(Body b : bodies){
-        			if(b.getPosition().y<-20f){
-        		world.destroyBody(b);
-        	}
-    			}
-			 */
+         /*
+         Array<Body> bodies = new Array<Body>();
+         world.getBodies(bodies);
+             for(Body b : bodies){
+                 if(b.getPosition().y<-20f){
+              world.destroyBody(b);
+           }
+             }
+          */
 			//world.destroyBody(hitBody);
 		}
-		//	System.out.println("Ready ::" + touch.x * PPM + " " + touch.y * PPM);
+		// System.out.println("Ready ::" + touch.x * PPM + " " + touch.y * PPM);
 		last = new Vector2(touch.x * PPM, touch.y * PPM);
 		touch.x = touch.x * PPM;
 		touch.y = touch.y * PPM;
@@ -611,9 +649,57 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		//.out.println("touch Down");
 		return true;
 	}
-
+	boolean vol = true;
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+
+		Vector3 touchPos = new Vector3();
+		b2dCam.unproject(touchPos.set(screenX, screenY, 0));
+		touchPos.x = touchPos.x * PPM;
+		touchPos.y = touchPos.y * PPM;
+		System.out.println("Vol Button " + buttons[0].getPosX() + " " + buttons[0].getPosY());
+		System.out.println("Undo Button "+buttons[1].getPosX()+" "+buttons[1].getPosY());
+		System.out.println("Menu Button "+buttons[2].getPosX()+" "+buttons[2].getPosY());
+		//System.out.println(touchPos.x + " " + touchPos.y);
+		//  System.out.println(buttons[0].isPressed(touchPos));
+		System.out.println("Touch "+touchPos.x + " " + touchPos.y);
+		if(buttons[0].isPressed(touchPos)){
+			System.out.println("Vol pressed");
+			if (vol == true){
+				vol = false;
+
+				Game.rainMusic.pause();
+				buttons[0] = new Button(soundoff);
+				buttons[0].setPos(10, 400);
+			}
+			else {
+				vol = true;
+				Game.rainMusic.play();
+				buttons[0] = new Button(soundon);
+				buttons[0].setPos(10, 400);
+			}
+			return true;
+		}
+		if(buttons[1].isPressed(touchPos)){
+			System.out.println("Undo pressed");
+			if (all.size()-1 > 0)
+				flag = 0;
+			if (flag==0) { //it's the 'D' key
+				world.destroyBody(all.get(all.size() - 1));
+				all.remove(all.size() - 1);
+				//tall.remove(tall.size() - 1);
+				if(all.size()<=0)
+					flag=1;
+				spriteall.remove(spriteall.size()-1);
+			}
+			return true;
+		}
+		if(buttons[2].isPressed(touchPos)){
+			System.out.println("Menu pressed");
+
+			return true;
+		}
+
 		Vector3 touch = new Vector3();
 		dirty = 0;
 		b2dCam.unproject(touch.set(screenX, screenY, 0));
@@ -623,14 +709,17 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		y = (int) (touch.y);
 		ar.add(new Vector2(x / PPM, y / PPM));
 		//updatePoints(ar, world);
-		createPhysicBodies(ar,world);
+		Body bbs=createPhysicBodies(ar,world);
 		drawLerped(new Vector2((int) last.x, height - (int) last.y), new Vector2(x, height - y));
 		//pixmap.scaled(1000, 600);
-		//	pixmap.scale
-		pixmaptex = new Texture(pixmap);
-		tall.add(pixmaptex);
-		spriteall.add(new Sprite(pixmaptex));
-		//pixmaptex.dispose();
+		// pixmap.scale
+		if(bbs!=null){
+			pixmaptex = new Texture(pixmap);
+			tall.add(pixmaptex);
+			spriteall.add(new Sprite(pixmaptex));
+			//pixmaptex.dispose();
+
+		}
 		pixmap.dispose();
 		//pixmaptex.dispose();
 		//createPhysicBodies(ar,world);
@@ -650,7 +739,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 				(input.get(0).y / PPM));
 		bodyDef.type = BodyDef.BodyType.DynamicBody;
 		Body body = world.createBody(bodyDef);
-		//	System.out.println(input.size);
+		// System.out.println(input.size);
 		if (input.size < 2)
 			return;
 		if (input.size <= 3) {
@@ -680,10 +769,10 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		//dirty=0;
 		touch.x = touch.x * PPM;
 		touch.y = touch.y * PPM;
-		//	System.out.println(touch.x + " " + touch.y);
-		//	System.out.println("Ready ::" + touch.x + " " + touch.y);
+		// System.out.println(touch.x + " " + touch.y);
+		// System.out.println("Ready ::" + touch.x + " " + touch.y);
 
-		//	System.out.println("UReady ::" + touch.x + " " + touch.y);
+		// System.out.println("UReady ::" + touch.x + " " + touch.y);
 		//if (Math.sqrt(Math.pow(( last.x - touch.x), 2) + Math.pow((((int) last.y) -  touch.y), 2)) > 2)
 		drawLerped(new Vector2((int) last.x, height - (int) last.y), new Vector2(touch.x, height - touch.y));
 		circum+=new Vector2((int) last.x, height - (int) last.y).dst2(new Vector2(touch.x, height - touch.y));
@@ -699,11 +788,11 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 
 			//if(count<8)
 			ar.add(new Vector2(x / PPM, y / PPM));
-			//	System.out.println("Last" + last.x + " " + last.y);
+			// System.out.println("Last" + last.x + " " + last.y);
 			//pixmap.drawLine((int) last.x, Gdx.graphics.getHeight() - (int) last.y, x, Gdx.graphics.getHeight() - y);
 			//drawLerped(new Vector2((int) last.x, Gdx.graphics.getHeight() - (int) last.y), new Vector2(touch.x, Gdx.graphics.getHeight() - touch.y));
 			///pixmap.fillCircle(x, y,5 );
-			//	System.out.println("touch Drr" + x + " " + y);
+			// System.out.println("touch Drr" + x + " " + y);
 
 		}
 		//pi.drawCircle(x % 100, x%100, 3);
@@ -725,8 +814,8 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 
 	public void drawLerped(Vector2 from, Vector2 to) {
 		float dist = to.dst(from);
-			/* Calc an alpha step to put one dot roughly every 1/8 of the brush
-			 * radius. 1/8 is arbitrary, but the results are fairly nice. */
+         /* Calc an alpha step to put one dot roughly every 1/8 of the brush
+          * radius. 1/8 is arbitrary, but the results are fairly nice. */
 		float alphaStep = brushSize / (8f * dist);
 
 		for (float a = 0; a < 1f; a += alphaStep) {
@@ -770,8 +859,8 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 					continue;
 				if (Math.abs(distance - 1.1920929E-7) < 0.001)
 					continue;
-				//	if(distance<1.1)
-				//		continue;
+				// if(distance<1.1)
+				//    continue;
 
 				float angle = dir.angle() * MathUtils.degreesToRadians;
 
@@ -813,10 +902,10 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		//Check level to be displayed
 		String selLev = "json/level1.json";
 /*
-		FileHandle readF = Gdx.files.internal("json/curlevel.txt");
-		String lno;
-		lno = readF.readString();
-		int ln = Integer.parseInt(lno);
+      FileHandle readF = Gdx.files.internal("json/curlevel.txt");
+      String lno;
+      lno = readF.readString();
+      int ln = Integer.parseInt(lno);
 */
 		int ln = GameStateManager.getCURLEVEL();
 		if (ln == 2)
@@ -902,12 +991,3 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 
 	}
 }
-
-
-
-
-
-
-
-
-

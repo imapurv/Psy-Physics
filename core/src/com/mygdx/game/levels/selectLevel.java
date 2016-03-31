@@ -11,7 +11,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.handlers.GameStateManager;
@@ -22,46 +29,90 @@ import com.mygdx.game.view.Button;
 /**
  * Created by HP on 30-03-2016.
  */
-public class selectLevel extends GameState implements InputProcessor,ApplicationListener {
+public class selectLevel extends GameState implements InputProcessor,ApplicationListener, EventListener {
 
     public Button buttons[];
     private TextureRegion one,two,three,four;
     private TextureAtlas textatlas;
-    private BitmapFont font;
+    private TextButton button[];
+    private Stage stage;
     private Skin buttonSkin,textSkin;
     private Viewport viewport;
     private OrthographicCamera camera;
-    private Texture background;
-
-    public selectLevel(GameStateManager gsm) {
+    private Texture background,buton,butoff;
+    Skin skin;
+    BitmapFont font;
+    public static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"´`'<>";
+    public selectLevel(final GameStateManager gsm) {
         super(gsm);
-
-        background =new Texture(Gdx.files.internal("back.jpg"));
+        skin = new Skin(Gdx.files.internal("data/uiskin.json"));
+        background =new Texture(Gdx.files.internal("dataa/levelback.png"));
+        buton =new Texture(Gdx.files.internal("dataa/buttonon.png"));
+        butoff =new Texture(Gdx.files.internal("dataa/buttonoff.png"));
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Game.V_WIDTH, Game.V_HEIGHT);
 
         textatlas = new TextureAtlas("dataa/text.atlas");
-        textSkin= new Skin();
-        textSkin.addRegions(textatlas);
-        font = new BitmapFont(Gdx.files.internal("data/arial-15.fnt"),false); //** font **//
+       // textSkin= new Skin();
+       // textSkin.addRegions(textatlas);
+        font = new BitmapFont(Gdx.files.internal("dataa/bb.fnt"),false); //** font **//
+       // font = TrueTypeFontFactory.createBitmapFont(Gdx.files.internal("dataa/crayon.ttf"), FONT_CHARACTERS, 12.5f, 7.5f, 1.0f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        font.setColor(1f, 1f, 1f, 1f);
+        //font.getData().setScale(1,1);
+
+
+
+
+        stage = new Stage();        //** window is stage **//
+        stage.clear();
+        Gdx.input.setInputProcessor(stage); //** stage is responsive **//
+
+        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle(); //** Button properties **//
+        style.up = new TextureRegionDrawable(new TextureRegion(butoff));
+        style.down = new TextureRegionDrawable(new TextureRegion(buton));
+        style.font = font;
+
 
         one=new TextureRegion(textatlas.findRegion("play"));
         two = new TextureRegion(textatlas.findRegion("credit"));
         three=new TextureRegion(textatlas.findRegion("play"));
         four = new TextureRegion(textatlas.findRegion("credit"));
 
+
+        button = new TextButton[5];
         buttons = new Button [5];
-        buttons[0] = new Button(one);
-        buttons[0].setPos(50, 300);
+        int pre=50;
+        for(int i=0;i<5-1;i++){
+            final int g=i;
+            button[i]= new TextButton(""+(i+1)+"",style);
+            button[i].setHeight(80); //** Button Height **//
+            button[i].setWidth(130); //** Button Width **//
+            button[i].setPosition(pre, 300);
+            button[i].addListener(new InputListener() {
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    return true;
+                }
+
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    GameStateManager.setCURLEVEL(g+1);
+                    gsm.pushState(GameStateManager.PLAY);
+                }
+            });
+            pre+=130;
+            stage.addActor(button[i]);
+        }
+       /*
         buttons[1] = new Button(two);
         buttons[1].setPos(200, 300);
         buttons[2] = new Button(three);
         buttons[2].setPos(450, 300);
         buttons[3] = new Button(four);
         buttons[3].setPos(600 , 300);
+        */
 
-        Gdx.input.setInputProcessor(this);
+        //Gdx.input.setInputProcessor(this);
+
     }
 
     @Override
@@ -78,17 +129,21 @@ public class selectLevel extends GameState implements InputProcessor,Application
     public void render() {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        //stage.act();
-        sb.begin();
-        sb.draw(background,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        stage.act();
         cam.update();
         sb.setProjectionMatrix(cam.combined);
+        sb.begin();
+        sb.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        buttons[0].draw(sb);
-        buttons[1].draw(sb);
-        buttons[2].draw(sb);
-        buttons[3].draw(sb);
-        //stage.draw();
+        //buttons[0].draw(sb);
+        //buttons[1].draw(sb);
+       // buttons[2].draw(sb);
+       // buttons[3].draw(sb);
+
+        sb.end();
+        sb.begin();
+
+        stage.draw();
         sb.end();
     }
 
@@ -152,26 +207,13 @@ public class selectLevel extends GameState implements InputProcessor,Application
         System.out.println(touchPos.x + " " + touchPos.y);
         //  System.out.println(buttons[0].isPressed(touchPos));
         System.out.println(touchPos.x + " " + touchPos.y);
-        if(buttons[0].isPressed(touchPos)){
+        /*
+        if(this.button[0].isPressed()){
             System.out.println("Press 1");
             GameStateManager.setCURLEVEL(1);
             gsm.pushState(GameStateManager.PLAY);
         }
-        if(buttons[1].isPressed(touchPos)){
-            System.out.println("Press 2");
-            GameStateManager.setCURLEVEL(2);
-            gsm.pushState(GameStateManager.PLAY);
-        }
-        if(buttons[2].isPressed(touchPos)){
-            System.out.println("Press 3");
-            GameStateManager.setCURLEVEL(3);
-            gsm.pushState(GameStateManager.PLAY);
-        }
-        if(buttons[3].isPressed(touchPos)){
-            System.out.println("Press 4");
-            GameStateManager.setCURLEVEL(4);
-            gsm.pushState(GameStateManager.PLAY);
-        }
+        */
 
         return true;
     }
@@ -188,6 +230,12 @@ public class selectLevel extends GameState implements InputProcessor,Application
 
     @Override
     public boolean scrolled(int amount) {
+        return false;
+    }
+
+    @Override
+    public boolean handle(Event event) {
+      //  event.equals()
         return false;
     }
 }
