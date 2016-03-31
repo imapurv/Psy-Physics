@@ -77,27 +77,36 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		world.setContactListener(new ContactListener() {
 			@Override
 			public void beginContact(Contact contact) {
-				if((contact.getFixtureA().getBody() == bodycircle &&
+				if ((contact.getFixtureA().getBody() == bodycircle &&
 						contact.getFixtureB().getBody() == bstar)
 						||
 						(contact.getFixtureA().getBody() == bstar &&
 								contact.getFixtureB().getBody() == bodycircle)) {
 					System.out.println("Here collision");
-					bstar.applyForceToCenter(new Vector2(50, 0), true);
-					Timer.schedule(new Timer.Task() {
-						@Override
-						public void run() {
-							// Do your work
-							GameStateManager.setCURLEVEL(GameStateManager.getCURLEVEL() + 1);
-							gsm.pushState(GameStateManager.PLAY);
-						}
-					}, 2);
-
+					bstar.applyForceToCenter(new Vector2(0, 20), true);
+					pass = 1;
 				}
+
 			}
 
 			@Override
 			public void endContact(Contact contact) {
+				if ((contact.getFixtureA().getBody() == bodycircle &&
+						contact.getFixtureB().getBody() == bstar)
+						||
+						(contact.getFixtureA().getBody() == bstar &&
+								contact.getFixtureB().getBody() == bodycircle)) {
+					Timer.schedule(new Timer.Task() {
+						@Override
+						public void run() {
+							// Do your work
+
+							GameStateManager.setCURLEVEL(GameStateManager.getCURLEVEL() + 1);
+							gsm.pushState(GameStateManager.PLAY);
+						}
+					}, 3);
+				}
+
 
 			}
 
@@ -178,6 +187,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 
 	}
 	Body bodycircle;
+	int pass=0;
 	int dirty = 0;
 	Texture img,tstar;
 	Texture ball;
@@ -185,6 +195,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	public Play(GameStateManager gsm) {
 
 		super(gsm);
+		end=new Texture(Gdx.files.internal("dataa/levelcom.png"));
 		tstar=  new Texture(Gdx.files.internal("dataa/star.png"));
 		img = new Texture(Gdx.files.internal("data/whiteback.jpg"));
 		ball =new Texture(Gdx.files.internal("dataa/ball.png"));
@@ -374,7 +385,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		b2dr.render(world, b2dCam.combined);
 		sb.begin();
 
-		//sb.draw(img, 0, 0);
+		sb.draw(img, 0, 0);
 		cam.update();
 		sb.setProjectionMatrix(cam.combined);
 		try {
@@ -435,6 +446,10 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 			//p.dispose();
 
 		}
+		if(pass==1){
+			sb.draw(end, 0, 0);
+
+		}
 
 		//pixmap.dispose();
 		//sb.draw(pixmaptex, 0, 0);
@@ -473,9 +488,10 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		runtime.dispose();
 
 	}
-
+	Texture end;
 	@Override
 	public void create() {
+
 		cam = new OrthographicCamera();
 		viewport = new FitViewport(Game.V_WIDTH,Game.V_HEIGHT,cam);
 		viewport.apply();
@@ -528,14 +544,14 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	int flag=0;
 	@Override
 	public boolean keyTyped(char character) {
-		//if (all.size() > 0)
-		//	flag = 0;
+		if (all.size() > 0)
+			flag = 0;
 		if (character == 'w'&&flag==0) { //it's the 'D' key
 			world.destroyBody(all.get(all.size() - 1));
 			all.remove(all.size() - 1);
 			//tall.remove(tall.size() - 1);
-			//if(all.size()<=0)
-			//	flag=1;
+			if(all.size()<=0)
+				flag=1;
 			spriteall.remove(spriteall.size()-1);
 		}
 		return true;
