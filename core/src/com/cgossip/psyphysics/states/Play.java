@@ -958,7 +958,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 			selLev = "json/level4.json";
 		if (ln == 5)
 			selLev = "json/level5.json";
-
+		System.out.println("I got it");
 		FileHandle fileHandle = Gdx.files.internal(selLev);
 		String s = new String(fileHandle.readString());
 		Object obj = parser.parse(s);
