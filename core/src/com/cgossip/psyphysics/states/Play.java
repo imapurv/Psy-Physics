@@ -57,6 +57,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	SpriteBatch sb;
 	Stack<Body> undo;
 	ArrayList<Body> all;
+	ArrayList<String> warning;
 	ArrayList<Texture> tall;
 	ArrayList<Sprite> spriteall;
 	private OrthographicCamera b2dCam;
@@ -179,7 +180,21 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		col.add(getVal(219,170,191));col.add(getVal(97,60,163));
 		col.add(getVal(245,225,89));
 		col.add(getVal(216,168,164));
+		col.add(getVal(20,167,61));
+		col.add(getVal(182,237,59));
+		col.add(getVal(0,0,158));
+		col.add(getVal(47,148,219));
+		col.add(getVal(255,215,76));
 
+
+
+
+		warning=new ArrayList<String>();
+		warning.add("can't you read numbers ?");
+		warning.add("do me a favour and see downleft");
+		warning.add("waacha wrong with you ?");
+		warning.add("can't do it. you are OUTa line");
+		warning.add("time to undo");
 
 	}
 	Color getVal(int r,int g,int b){
@@ -197,7 +212,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	public Button buttons[];
 	private TextureRegion soundon,soundoff,back,menu;
 	private TextureAtlas textatlas;
-	private BitmapFont font;
+	private BitmapFont font,lfont;;
 	private Skin textSkin;
 
 	public Play(GameStateManager gsm) {
@@ -207,8 +222,10 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		textatlas = new TextureAtlas("dataa/tools.atlas");
 		textSkin= new Skin();
 		textSkin.addRegions(textatlas);
-		font = new BitmapFont(Gdx.files.internal("data/arial-15.fnt"),false); //** font **//
-
+		font = new BitmapFont(Gdx.files.internal("dataa/limit.fnt"),false); //** font **//
+		font.setColor(0,0,0,1);
+		lfont = new BitmapFont(Gdx.files.internal("dataa/bb.fnt"),false);
+		lfont.setColor(255,0,0,1);
 		soundon=new TextureRegion(textatlas.findRegion("volon"));
 		soundoff=new TextureRegion(textatlas.findRegion("voloff"));
 		back = new TextureRegion(textatlas.findRegion("undo"));
@@ -244,7 +261,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		//Body body = world.createBody(bdef);
 
 
-		font = new BitmapFont();
+		//font = new BitmapFont();
 		all = new ArrayList<Body>();
 		tall = new ArrayList<Texture>();
 		PolygonShape shape = new PolygonShape();
@@ -490,6 +507,16 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		//System.out.println("Did");
 
 		//pixmaptex.dispose();
+		font.draw(sb, String.valueOf(20 - all.size()), 10, 50);
+		//System.out.println(war);
+		if(war>0){
+
+			lfont.draw(sb, warning.get(0), 400 - warning.get(0).length() * 10, 330);
+			//System.out.println(Gdx.graphics.getDeltaTime()+" "+war);
+			war-=Gdx.graphics.getDeltaTime()*.0001;
+			if(war<=0)
+				war=0;
+		}
 		sb.end();
 		// draw box2d world
 
@@ -519,7 +546,9 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 			tall.get(i).dispose();
 		}
 		statictexture.dispose();
-		runtime.dispose();
+		try {
+			runtime.dispose();
+		}catch (Exception e){}
 
 	}
 	Texture end;
@@ -575,7 +604,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		arr.add(ar.get(ar.size - 1));
 		createPhysicBodies(arr, world);
 	}
-	int flag=0;
+	int flag=1;
 	@Override
 	public boolean keyTyped(char character) {
 		if (all.size() > 0)
@@ -594,6 +623,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	Body hitBody = null;
 	Vector2 last;
 	int bflag=0;
+	int war=0;
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		bflag = 0;
@@ -713,7 +743,15 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		y = (int) (touch.y);
 		ar.add(new Vector2(x / com.cgossip.psyphysics.handlers.B2DVars.PPM, y / com.cgossip.psyphysics.handlers.B2DVars.PPM));
 		//updatePoints(ar, world);
-		Body bbs=createPhysicBodies(ar,world);
+		Body bbs=null;
+		if(20-all.size()-1>=0){
+			bbs=createPhysicBodies(ar,world);
+		}
+		else{
+			Collections.shuffle(warning);
+			war=100;
+			return true;
+		}
 		drawLerped(new Vector2((int) last.x, height - (int) last.y), new Vector2(x, height - y));
 		//pixmap.scaled(1000, 600);
 		// pixmap.scale
