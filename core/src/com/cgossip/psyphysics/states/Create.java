@@ -28,6 +28,7 @@ import com.badlogic.gdx.utils.Array;
 import com.cgossip.psyphysics.handlers.GameStateManager;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.FileWriter;
@@ -348,6 +349,9 @@ public class Create extends GameState implements InputProcessor {
 		arr.add(ar.get(ar.size-1));
 		createPhysicBodies(arr, world);
 	}
+	JSONArray ball = new JSONArray();
+	JSONArray mobj = new JSONArray();
+	JSONArray star = new JSONArray();
 	void CreateJason()throws Exception {
 
 		System.out.println(Arrays.toString(texturem.toArray()));
@@ -373,10 +377,12 @@ public class Create extends GameState implements InputProcessor {
 		JSONObject objs = new JSONObject();
 		objs.put("Points", points);
 		objs.put("Texture", texturem);
+		objs.put("Ball",ballob);
+		objs.put("Star",starob);
 
 		// try-with-resources statement based on post comment below :)
 
-		FileWriter file = new FileWriter(String.valueOf(Gdx.files.internal("json/level5.json")));
+		FileWriter file = new FileWriter(String.valueOf(Gdx.files.internal("json/leveln.json")));
 
 		file.write(objs.toString());
 		file.flush();
@@ -386,7 +392,7 @@ public class Create extends GameState implements InputProcessor {
 		System.out.println("\nJSON Object: " + objs);
 
 	}
-	int tflag=0;
+	int tflag=0,bflag=0,sflag=0,mflag=0;
 	@Override
 	public boolean keyTyped(char character) {
 
@@ -397,6 +403,12 @@ public class Create extends GameState implements InputProcessor {
 		}
 		if(character =='t'){
 			tflag=1;
+		}
+		if (character == 'b'){
+			bflag=1;
+		}
+		if (character == 's'){
+			sflag=1;
 		}
 		if(character=='d'){
 			try {
@@ -411,6 +423,8 @@ public class Create extends GameState implements InputProcessor {
 	}
 	Body hitBody = null;
 	Vector2 last;
+	int notnow=0;
+	JSONObject ballob,starob;
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		Vector3 touch = new Vector3();
@@ -443,6 +457,34 @@ public class Create extends GameState implements InputProcessor {
 		last=new Vector2(touch.x*PPM,touch.y*PPM);
         touch.x=touch.x*PPM;
 		touch.y=touch.y*PPM;
+
+		if(bflag==1){
+			try {
+				ballob = new JSONObject();
+				ballob.put("x",touch.x/PPM);
+				ballob.put("y",touch.y/PPM);
+				System.out.println("Balled");
+
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+
+			notnow=1;
+			return true;
+		}
+		if(sflag==1){
+			try {
+				starob = new JSONObject();
+				starob.put("x",touch.x/PPM);
+				starob.put("y",touch.y/PPM);
+				System.out.println("Stared");
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+
+			notnow=1;
+			return true;
+		}
 		//body.applyForce(0.1f, 0.1f, screenX, screenY, true);
 		//makenewPIx();
 		pixmap = new Pixmap( Gdx.graphics.getWidth(),
@@ -464,6 +506,14 @@ public class Create extends GameState implements InputProcessor {
 	int iit=0;
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		if (bflag==1) {
+			bflag=0;
+			return true;
+		}
+		if (sflag==1) {
+			sflag=0;
+			return true;
+		}
 		Vector3 touch = new Vector3();
 		dirty=0;
 		b2dCam.unproject(touch.set(screenX, screenY, 0));

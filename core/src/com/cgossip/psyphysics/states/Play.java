@@ -225,7 +225,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		font = new BitmapFont(Gdx.files.internal("dataa/limit.fnt"),false); //** font **//
 		font.setColor(0,0,0,1);
 		lfont = new BitmapFont(Gdx.files.internal("dataa/bb.fnt"),false);
-		lfont.setColor(255,0,0,1);
+		lfont.setColor(255, 0, 0, 1);
 		soundon=new TextureRegion(textatlas.findRegion("volon"));
 		soundoff=new TextureRegion(textatlas.findRegion("voloff"));
 		back = new TextureRegion(textatlas.findRegion("undo"));
@@ -248,12 +248,20 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		b2dr = new Box2DDebugRenderer();
 		ar = new Array<Vector2>();
 		undo = new Stack<Body>();
-		//width=Gdx.graphics.getWidth();
-		//height=Gdx.graphics.getHeight();
 		width=800;
 		spriteall=new ArrayList<Sprite>();
 		height=480;
 		col=new ArrayList<Color>();
+		ColorPush();
+		try {
+			readJson();
+		} catch (Exception e) {
+			System.out.println("Sadly Not Worked"+e.getMessage());
+			e.printStackTrace();
+		}
+		//width=Gdx.graphics.getWidth();
+		//height=Gdx.graphics.getHeight();
+
 		// create platform
 		BodyDef bdef = new BodyDef();
 		bdef.position.set(120 / com.cgossip.psyphysics.handlers.B2DVars.PPM, 120 / com.cgossip.psyphysics.handlers.B2DVars.PPM);
@@ -290,7 +298,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
 		bodyDef.type = BodyType.DynamicBody;
 // Set our body's starting position in the world
-		bodyDef.position.set(170 / com.cgossip.psyphysics.handlers.B2DVars.PPM, 350 / com.cgossip.psyphysics.handlers.B2DVars.PPM);
+		bodyDef.position.set(ballx, bally);
 		bodycircle = world.createBody(bodyDef);
 		Sprite bls=new Sprite(ball);
 		bls.setSize(55,55);
@@ -318,7 +326,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
 		star.type = BodyType.DynamicBody;
 // Set our body's starting position in the world
-		star.position.set(670/ com.cgossip.psyphysics.handlers.B2DVars.PPM, 210 / com.cgossip.psyphysics.handlers.B2DVars.PPM);
+		star.position.set(starx, stary);
 		bstar= world.createBody(star);
 
 		PolygonShape sshape = new PolygonShape();
@@ -343,7 +351,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
       fdef.shape = shape;
       body.createFixture(fdef);
       */
-		ColorPush();
+
 		// set up box2d cam
 		//b2dCam = new PerspectiveCamera();
 		b2dCam = new OrthographicCamera();
@@ -351,17 +359,12 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		//viewport = new FitViewport(Game.V_WIDTH / PPM, Game.V_HEIGHT / PPM, b2dCam);
 		sb = new SpriteBatch();
 		Gdx.input.setInputProcessor(this);
-		pixmap.setColor(0, 1, 0, 0.75f);
-		pixmap.fillCircle(32, 32, 32);
-		try {
-			readJson();
-		} catch (Exception e) {
-			System.out.println("Sadly Not Worked"+e.getMessage());
-			e.printStackTrace();
-		}
+
+
 
 	}
-
+	float ballx,bally;
+	float starx,stary;
 	Vector3 testPoint = new Vector3();
 	QueryCallback callback = new QueryCallback() {
 		@Override
@@ -962,11 +965,26 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		FileHandle fileHandle = Gdx.files.internal(selLev);
 		String s = new String(fileHandle.readString());
 		Object obj = parser.parse(s);
+
+
+
 		System.out.println("Twoooo");
 		tttext = new ArrayList<Vector2>();
 
 		JSONObject jsonObject = (JSONObject) obj;
 
+
+		JSONObject ball=(JSONObject)jsonObject.get("Ball");
+		JSONObject star=(JSONObject)jsonObject.get("Star");
+		System.out.println(ball.get("x")+" "+ball.get("y"));
+		Double d =(Double)ball.get("x");
+		ballx=d.floatValue();
+		d =(Double)ball.get("y");
+		bally=d.floatValue();
+		d =(Double)star.get("x");
+		starx=d.floatValue();
+		d =(Double)star.get("y");
+		stary=d.floatValue();
 		JSONArray texture = (JSONArray) jsonObject.get("Texture");
 		Iterator iterator = texture.iterator();
 		while (iterator.hasNext()) {
