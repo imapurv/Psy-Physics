@@ -9,24 +9,31 @@ exit
   orig: 244, 27
   offset: 0, 0
   index: -1
-voloff
+yesoff
   rotate: false
-  xy: 44, 1
-  size: 56,68
-  orig:  56,68
+  xy: 1, 135
+  size: 129, 75
+  orig: 129, 75
   offset: 0, 0
   index: -1
-undo
+yeson
   rotate: false
-  xy: 104, 1
-  size: 62, 68
-  orig: 62, 68
+  xy: 385, 135
+  size: 129, 75
+  orig: 129, 75
   offset: 0, 0
   index: -1
-menu
+noon
   rotate: false
-  xy: 168, 1
-  size: 37, 68
-  orig: 37, 68
+  xy: 130, 135
+  size: 125, 75
+  orig: 125, 75
+  offset: 0, 0
+  index: -1
+nooff
+  rotate: false
+  xy: 257, 135
+  size: 125, 75
+  orig: 125, 75
   offset: 0, 0
   index: -1

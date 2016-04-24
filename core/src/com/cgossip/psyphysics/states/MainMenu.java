@@ -96,17 +96,33 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
     private TextureAtlas textatlas,dialogatlas;
     private Viewport viewport;
     private OrthographicCamera camera;
-    public Button buttons[];
-    TextureRegion texte;
+    public Button buttons[],dbuttons[];
+    TextureRegion texte,yesoff,yeson,nooff,noon;
+
     public MainMenu(final GameStateManager gsm) {
         super(gsm);
         background =new Texture(Gdx.files.internal("dataa/newbackground.png"));
         dialogback=new Texture(Gdx.files.internal("dataa/dialogback.png"));
-        dialogatlas = new TextureAtlas("dataa/dialoga.atlas");
         buttonsAtlas = new TextureAtlas("dataa/button.pack"); //**button atlas image **//
         textatlas = new TextureAtlas("dataa/text.atlas");
         wood=new Texture(Gdx.files.internal("dataa/wood.png"));
-        texte=new TextureRegion(dialogatlas.findRegion("exit"));
+
+        dialogatlas = new TextureAtlas("dataa/dialoga.atlas");
+        dialogskin = new Skin();
+        dialogskin.addRegions(dialogatlas);
+        yesoff = new TextureRegion(dialogatlas.findRegion("yesoff"));
+        yeson = new TextureRegion(dialogatlas.findRegion("yeson"));
+        nooff = new TextureRegion(dialogatlas.findRegion("nooff"));
+        noon = new TextureRegion(dialogatlas.findRegion("noon"));
+        texte = new TextureRegion(dialogatlas.findRegion("exit"));
+
+        dbuttons = new Button[3];
+        dbuttons[0] = new Button(yesoff);
+        dbuttons[0].setPos(150,165);
+        dbuttons[1] = new Button(nooff);
+        dbuttons[1].setPos(430,160);
+
+        dialogback = new Texture(Gdx.files.internal("dataa/dialogback.png"));
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, com.cgossip.psyphysics.main.Game.V_WIDTH , com.cgossip.psyphysics.main.Game.V_HEIGHT );
@@ -258,11 +274,16 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         buttons[2].draw(sb);
         sb.draw(currentFrame, 50, 50, 500,200);
         sb.draw(logo, 10,350);
-        if(backf==1){
-            sb.draw(dialogback, 0,0);
+
+        //Create dialog box
+        if (dialog == 1 ){
+
+            sb.draw(dialogback,0,0);
             sb.draw(texte,160,250);
-           // texte.
+            dbuttons[0].draw(sb);
+            dbuttons[1].draw(sb);
         }
+
         //stage.draw();
         sb.end();
 
@@ -330,6 +351,9 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         return false;
     }
 
+    int y=0,n=0;
+    int dialog = 0;
+
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 
@@ -352,11 +376,52 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
             }
         }
 */
+        y = 0;
+        n = 0;
+        if (n == 0){
+            dbuttons[1] = new Button(nooff);
+            dbuttons[1].setPos(430,160);
+        }
+        Vector3 touchPos = new Vector3();
+        camera.unproject(touchPos.set(screenX, screenY, 0));
+        /*
+        touchPos.x = touchPos.x * com.cgossip.psyphysics.handlers.B2DVars.PPM;
+        touchPos.y = touchPos.y * com.cgossip.psyphysics.handlers.B2DVars.PPM;
+        */
+        System.out.println("Touch down");
+        //  System.out.println(buttons[0].isPressed(touchPos));
+        System.out.println("Touch "+touchPos.x + " " + touchPos.y);
+        if(dbuttons[0].isPressed(touchPos) && dialog==1){
+            System.out.println("Yes pressed");
+            dbuttons[0] = new Button(yeson);
+            dbuttons[0].setPos(150,165);
+            y=1;
+            //gsm.setState(GameStateManager.PLAY);
+            return true;
+        }
+        if(dbuttons[1].isPressed(touchPos) && dialog==1){
+            System.out.println("No pressed");
+            dbuttons[1] = new Button(noon);
+            dbuttons[1].setPos(430,160);
+            n=1;
+            //gsm.setState(GameStateManager.MENU);
+            return true;
+        }
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        if (y == 1) {
+            System.out.println("Yes pressed");
+            Gdx.app.exit();
+            return true;
+        }
+        if (n == 1){
+            System.out.println("No pressed");
+            dialog = 0;
+            return true;
+        }
         Vector3 touchPos = new Vector3();
         touchPos.set(screenX, screenY, 0);
         camera.unproject(touchPos);
@@ -375,14 +440,16 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         }
         if(buttons[2].isPressed(touchPos)){
             System.out.println("Hwre");
-            Gdx.app.exit();
-
+            //Gdx.app.exit();
+            dialog = 1;
         }
         return true;
     }
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
+        if (dialog == 1)
+            return false;
         return false;
     }
 
