@@ -33,6 +33,8 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -248,11 +250,13 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	Texture ball;
 	Body bstar;
 
-	public Button buttons[];
-	private TextureRegion soundon,soundoff,back,menu;
-	private TextureAtlas textatlas;
+	public Button buttons[],dbuttons[],buttonc;
+	private TextureRegion soundon,soundoff,back,menu,resoff,reson,menuoff,menuon,tex;
+	private TextureAtlas textatlas,dtatlas;
 	private BitmapFont font,lfont;;
-	private Skin textSkin;
+	private Skin textSkin,dtskin;
+	private Texture dialogback;
+	private TextureRegion close;
 
 	public Play(GameStateManager gsm) {
 
@@ -262,7 +266,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		textSkin= new Skin();
 		textSkin.addRegions(textatlas);
 		font = new BitmapFont(Gdx.files.internal("dataa/limit.fnt"),false); //** font **//
-		font.setColor(0,0,0,1);
+		font.setColor(0, 0, 0, 1);
 		lfont = new BitmapFont(Gdx.files.internal("dataa/bb.fnt"),false);
 		lfont.setColor(255, 0, 0, 1);
 		soundon=new TextureRegion(textatlas.findRegion("volon"));
@@ -278,6 +282,27 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		buttons[2] = new Button(menu);
 		buttons[2].setPos(750, 400);
 
+
+		dtatlas = new TextureAtlas("dataa/playdialog.pack");
+		dtskin = new Skin();
+		dtskin.addRegions(dtatlas);
+		resoff = new TextureRegion(dtatlas.findRegion("resoff"));
+		reson = new TextureRegion(dtatlas.findRegion("reson"));
+		menuoff = new TextureRegion(dtatlas.findRegion("menuoff"));
+		menuon = new TextureRegion(dtatlas.findRegion("menuon"));
+		tex = new TextureRegion(dtatlas.findRegion("text"));
+
+		dbuttons = new Button[3];
+		dbuttons[0] = new Button(resoff);
+		dbuttons[0].setPos(150,165);
+		dbuttons[1] = new Button(menuoff);
+		dbuttons[1].setPos(430,160);
+
+		dialogback = new Texture(Gdx.files.internal("dataa/dialogback.png"));
+		close = new TextureRegion(new Texture(Gdx.files.internal("dataa/cross.png")));
+
+		buttonc = new Button(close);
+		buttonc.setPos(735,300);
 
 		end=new Texture(Gdx.files.internal("dataa/levelcom.png"));
 		tstar=  new Texture(Gdx.files.internal("dataa/star.png"));
@@ -441,6 +466,8 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	Sprite sss;
 	public static Sprite starsp,ballsp;
 	Sprite runtimesp,staticsp;
+	int dialog=0;
+
 	public void render() {
 
 
@@ -525,6 +552,16 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		buttons[1].draw(sb);
 		buttons[2].draw(sb);
 
+		//Create dialog box
+		if (dialog == 1 ){
+
+			sb.draw(dialogback,0,0);
+			sb.draw(tex,160,250);
+			dbuttons[0].draw(sb);
+			dbuttons[1].draw(sb);
+			buttonc.draw(sb);
+
+		}
 
 
 		if (dirty == 1) {
@@ -668,8 +705,12 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	Vector2 last;
 	int bflag=0;
 	int war=0;
+	int res=0;
+	int me=0;
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		res = 0;
+		me = 0;
 		bflag = 0;
 		Vector3 touchPos = new Vector3();
 		b2dCam.unproject(touchPos.set(screenX, screenY, 0));
@@ -710,14 +751,31 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 				//tall.remove(tall.size() - 1);
 				if(all.size()<=0)
 					flag=1;
-				spriteall.remove(spriteall.size()-1);
+				spriteall.remove(spriteall.size() - 1);
 			}
 			return true;
 		}
 		if(buttons[2].isPressed(touchPos)){
 			bflag = 1;
+			dialog = 1;
+			System.out.println("Play Dialog pressed");
+			//gsm.setState(GameStateManager.SELECTLEVEL);
+			return true;
+		}
+		if(dbuttons[0].isPressed(touchPos) && dialog==1){
+			System.out.println("Restart pressed");
+			dbuttons[0] = new Button(reson);
+			dbuttons[0].setPos(150,165);
+			res=1;
+			//gsm.setState(GameStateManager.PLAY);
+			return true;
+		}
+		if(dbuttons[1].isPressed(touchPos) && dialog==1){
 			System.out.println("Menu pressed");
-			gsm.setState(GameStateManager.SELECTLEVEL);
+			dbuttons[1] = new Button(menuon);
+			dbuttons[1].setPos(430,160);
+			me=1;
+			//gsm.setState(GameStateManager.MENU);
 			return true;
 		}
 
@@ -777,46 +835,69 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 
 		if (bflag == 1)
 			return false;
-
-		Vector3 touch = new Vector3();
-		dirty = 0;
-		b2dCam.unproject(touch.set(screenX, screenY, 0));
-		touch.x = touch.x * com.cgossip.psyphysics.handlers.B2DVars.PPM;
-		touch.y = touch.y * com.cgossip.psyphysics.handlers.B2DVars.PPM;
-		x = (int) touch.x;
-		y = (int) (touch.y);
-		ar.add(new Vector2(x / com.cgossip.psyphysics.handlers.B2DVars.PPM, y / com.cgossip.psyphysics.handlers.B2DVars.PPM));
-		//updatePoints(ar, world);
-		Body bbs=null;
-		if(10-all.size()-1>=0){
-			bbs=createPhysicBodies(ar,world);
-		}
-		else{
-			Collections.shuffle(warning);
-			war=100;
+		if (res == 1) {
+			System.out.println("Restart pressed");
+			gsm.setState(GameStateManager.PLAY);
 			return true;
 		}
-		drawLerped(new Vector2((int) last.x, height - (int) last.y), new Vector2(x, height - y));
-		//pixmap.scaled(1000, 600);
-		// pixmap.scale
-		if(bbs!=null){
-			pixmaptex = new Texture(pixmap);
-			//tall.add(pixmaptex);
-			spriteall.add(new Sprite(pixmaptex));
+		if (me == 1){
+			System.out.println("Menu pressed");
+			gsm.setState(GameStateManager.MENU);
+			return true;
+		}
+		Vector3 touchPos = new Vector3();
+		System.out.println("In touch up");
+		b2dCam.unproject(touchPos.set(screenX, screenY, 0));
+		touchPos.x = touchPos.x * com.cgossip.psyphysics.handlers.B2DVars.PPM;
+		touchPos.y = touchPos.y * com.cgossip.psyphysics.handlers.B2DVars.PPM;
+		System.out.println("Touch "+touchPos.x + " " + touchPos.y);
+
+		if (buttonc.isPressed(touchPos) && dialog == 1){
+			System.out.println("Close");
+			dialog=0;
+			return true;
+		}
+		if (dialog == 0) {
+			Vector3 touch = new Vector3();
+			dirty = 0;
+			b2dCam.unproject(touch.set(screenX, screenY, 0));
+			touch.x = touch.x * com.cgossip.psyphysics.handlers.B2DVars.PPM;
+			touch.y = touch.y * com.cgossip.psyphysics.handlers.B2DVars.PPM;
+			x = (int) touch.x;
+			y = (int) (touch.y);
+			ar.add(new Vector2(x / com.cgossip.psyphysics.handlers.B2DVars.PPM, y / com.cgossip.psyphysics.handlers.B2DVars.PPM));
+			//updatePoints(ar, world);
+			Body bbs = null;
+			if (10 - all.size() - 1 >= 0) {
+				bbs = createPhysicBodies(ar, world);
+			} else {
+				Collections.shuffle(warning);
+				war = 100;
+				return true;
+			}
+			drawLerped(new Vector2((int) last.x, height - (int) last.y), new Vector2(x, height - y));
+			//pixmap.scaled(1000, 600);
+			// pixmap.scale
+			if (bbs != null) {
+				pixmaptex = new Texture(pixmap);
+				//tall.add(pixmaptex);
+				spriteall.add(new Sprite(pixmaptex));
+				//pixmaptex.dispose();
+				//tall.clear();v
+
+
+			}
+			pixmap.dispose();
 			//pixmaptex.dispose();
-			//tall.clear();v
+			//createPhysicBodies(ar,world);
+			//createbody(ar, world);
+			//pixmap.dispose();
+			count = 0;
+			//pre=b;
+			//System.out.println("touch Up");
 
 
 		}
-		pixmap.dispose();
-		//pixmaptex.dispose();
-		//createPhysicBodies(ar,world);
-		//createbody(ar, world);
-		//pixmap.dispose();
-		count = 0;
-		//pre=b;
-		//System.out.println("touch Up");
-
 		return true;
 	}
 
@@ -852,40 +933,44 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	int circum=0;
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		Vector3 touch = new Vector3();
-		b2dCam.unproject(touch.set(screenX, screenY, 0));
-		//dirty=0;
-		touch.x = touch.x * com.cgossip.psyphysics.handlers.B2DVars.PPM;
-		touch.y = touch.y * com.cgossip.psyphysics.handlers.B2DVars.PPM;
-		// System.out.println(touch.x + " " + touch.y);
-		// System.out.println("Ready ::" + touch.x + " " + touch.y);
+		if (dialog == 1)
+			return false;
+		try {
+			Vector3 touch = new Vector3();
+			b2dCam.unproject(touch.set(screenX, screenY, 0));
+			//dirty=0;
+			touch.x = touch.x * com.cgossip.psyphysics.handlers.B2DVars.PPM;
+			touch.y = touch.y * com.cgossip.psyphysics.handlers.B2DVars.PPM;
+			// System.out.println(touch.x + " " + touch.y);
+			// System.out.println("Ready ::" + touch.x + " " + touch.y);
 
-		// System.out.println("UReady ::" + touch.x + " " + touch.y);
-		//if (Math.sqrt(Math.pow(( last.x - touch.x), 2) + Math.pow((((int) last.y) -  touch.y), 2)) > 2)
-		drawLerped(new Vector2((int) last.x, height - (int) last.y), new Vector2(touch.x, height - touch.y));
-		circum+=new Vector2((int) last.x, height - (int) last.y).dst2(new Vector2(touch.x, height - touch.y));
-		last = new Vector2(touch.x, touch.y);
+			// System.out.println("UReady ::" + touch.x + " " + touch.y);
+			//if (Math.sqrt(Math.pow(( last.x - touch.x), 2) + Math.pow((((int) last.y) -  touch.y), 2)) > 2)
+			drawLerped(new Vector2((int) last.x, height - (int) last.y), new Vector2(touch.x, height - touch.y));
+			circum += new Vector2((int) last.x, height - (int) last.y).dst2(new Vector2(touch.x, height - touch.y));
+			last = new Vector2(touch.x, touch.y);
 
 
-		//System.out.println(Gdx.graphics.getWidth()+" "+Gdx.graphics.getHeight());
-		//y=Gdx.graphics.getHeight()-screenY;
-		if (Math.sqrt(Math.pow((touch.x - x), 2) + Math.pow((touch.y - y), 2)) > 20) {
-			x = (int) touch.x;
-			y = (int) (touch.y);
-			count++;
+			//System.out.println(Gdx.graphics.getWidth()+" "+Gdx.graphics.getHeight());
+			//y=Gdx.graphics.getHeight()-screenY;
+			if (Math.sqrt(Math.pow((touch.x - x), 2) + Math.pow((touch.y - y), 2)) > 20) {
+				x = (int) touch.x;
+				y = (int) (touch.y);
+				count++;
 
-			//if(count<8)
-			ar.add(new Vector2(x / com.cgossip.psyphysics.handlers.B2DVars.PPM, y / com.cgossip.psyphysics.handlers.B2DVars.PPM));
-			// System.out.println("Last" + last.x + " " + last.y);
-			//pixmap.drawLine((int) last.x, Gdx.graphics.getHeight() - (int) last.y, x, Gdx.graphics.getHeight() - y);
-			//drawLerped(new Vector2((int) last.x, Gdx.graphics.getHeight() - (int) last.y), new Vector2(touch.x, Gdx.graphics.getHeight() - touch.y));
-			///pixmap.fillCircle(x, y,5 );
-			// System.out.println("touch Drr" + x + " " + y);
+				//if(count<8)
+				ar.add(new Vector2(x / com.cgossip.psyphysics.handlers.B2DVars.PPM, y / com.cgossip.psyphysics.handlers.B2DVars.PPM));
+				// System.out.println("Last" + last.x + " " + last.y);
+				//pixmap.drawLine((int) last.x, Gdx.graphics.getHeight() - (int) last.y, x, Gdx.graphics.getHeight() - y);
+				//drawLerped(new Vector2((int) last.x, Gdx.graphics.getHeight() - (int) last.y), new Vector2(touch.x, Gdx.graphics.getHeight() - touch.y));
+				///pixmap.fillCircle(x, y,5 );
+				// System.out.println("touch Drr" + x + " " + y);
 
+			}
+			//pi.drawCircle(x % 100, x%100, 3);
+			//pi.fillCircle(x % 100, y%100,5);
 		}
-		//pi.drawCircle(x % 100, x%100, 3);
-		//pi.fillCircle(x % 100, y%100,5);
-
+		catch (Exception e){}
 		return true;
 	}
 

@@ -1,0 +1,40 @@
+
+dialogreal.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+text
+  rotate: false
+  xy: 1, 75
+  size: 320, 45
+  orig: 320, 45
+  offset: 0, 0
+  index: -1
+resoff
+  rotate: false
+  xy: 1, 215
+  size: 200, 70
+  orig: 200, 70
+  offset: 0, 0
+  index: -1
+reson
+  rotate: false
+  xy: 1, 305
+  size: 200, 70
+  orig: 200, 70
+  offset: 0, 0
+  index: -1
+menuoff
+  rotate: false
+  xy: 205, 218
+  size: 285, 85
+  orig: 285, 85
+  offset: 0, 0
+  index: -1
+menuon
+  rotate: false
+  xy: 205, 305
+  size: 285, 85
+  orig: 285, 85
+  offset: 0, 0
+  index: -1

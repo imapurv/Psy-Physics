@@ -41,11 +41,13 @@ public class selectLevel extends GameState implements InputProcessor,Application
     private Stage stage;
     private OrthographicCamera camera;
     private Texture background,buton,butoff;
+    Texture close;
     Skin skin;
     BitmapFont font;
     public static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"´`'<>";
     public selectLevel(final GameStateManager gsm) {
         super(gsm);
+        close=new Texture(Gdx.files.internal("dataa/cross.png"));
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         background =new Texture(Gdx.files.internal("dataa/levelback.png"));
         buton =new Texture(Gdx.files.internal("dataa/buttonon.png"));
@@ -99,6 +101,27 @@ public class selectLevel extends GameState implements InputProcessor,Application
         stage.clear();
         Gdx.input.setInputProcessor(stage); //** stage is responsive **//
         Gdx.input.setCatchBackKey(true);
+
+        TextButton.TextButtonStyle cstyle = new TextButton.TextButtonStyle();
+        cstyle.up = new TextureRegionDrawable(new TextureRegion(close));
+        cstyle.font = font;
+
+        TextButton buttonc = new TextButton("  ",cstyle);
+        buttonc.setHeight(50);
+        buttonc.setWidth(50);
+        buttonc.setPosition(720, 420);
+        buttonc.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                gsm.setState(GameStateManager.MENU);
+            }
+        });
+        stage.addActor(buttonc);
 
         TextButton.TextButtonStyle style = new TextButton.TextButtonStyle(); //** Button properties **//
         style.up = new TextureRegionDrawable(new TextureRegion(butoff));
@@ -163,12 +186,12 @@ public class selectLevel extends GameState implements InputProcessor,Application
         cam.update();
         sb.setProjectionMatrix(cam.combined);
         sb.begin();
-        sb.draw(background, 0, 0, 800,480);
-
+        sb.draw(background, 0, 0, 800, 480);
         sb.end();
         sb.begin();
 
         stage.draw();
+
         sb.end();
     }
 
@@ -229,21 +252,7 @@ public class selectLevel extends GameState implements InputProcessor,Application
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        Vector3 touchPos = new Vector3();
-        touchPos.set(screenX, screenY, 0);
-        camera.unproject(touchPos);
-        System.out.println(touchPos.x + " " + touchPos.y);
-        //  System.out.println(buttons[0].isPressed(touchPos));
-        System.out.println(touchPos.x + " " + touchPos.y);
-        /*
-        if(this.button[0].isPressed()){
-            System.out.println("Press 1");
-            GameStateManager.setCURLEVEL(1);
-            gsm.pushState(GameStateManager.PLAY);
-        }
-        */
-
-        return true;
+        return false;
     }
 
     @Override

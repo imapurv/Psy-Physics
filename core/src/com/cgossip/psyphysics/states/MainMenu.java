@@ -260,7 +260,7 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         sb.draw(logo, 10,350);
         if(backf==1){
             sb.draw(dialogback, 0,0);
-            sb.draw(texte,450,110);
+            sb.draw(texte,160,250);
            // texte.
         }
         //stage.draw();
