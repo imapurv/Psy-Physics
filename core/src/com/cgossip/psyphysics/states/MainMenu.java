@@ -89,10 +89,11 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
     TextureRegion logo,play,credit,exit;
     Table root;
     float stateTime;
-    TextureRegion                   currentFrame;           // #7
+    TextureRegion                   currentFrame,currentFrame2;           // #7
     TextureRegion[]                 drawFrames;
+    TextureRegion[]                 drawFramesmenu;
     Texture background,wood,dialogback;
-    Animation drawAnimation;
+    Animation drawAnimation,drawAnimationm;
     private TextureAtlas textatlas,dialogatlas;
     private Viewport viewport;
     private OrthographicCamera camera;
@@ -118,7 +119,7 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
 
         dbuttons = new Button[3];
         dbuttons[0] = new Button(yesoff);
-        dbuttons[0].setPos(150,165);
+        dbuttons[0].setPos(165,165);
         dbuttons[1] = new Button(nooff);
         dbuttons[1].setPos(430,160);
 
@@ -202,18 +203,23 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         buttons = new Button [3];
         buttons[0] = new Button(play);
 
-        buttons[0].setPos(525,200);
+        buttons[0].setPos(500,200);
         buttons[1] = new Button(credit);
-        buttons[1].setPos(525,140);
+        buttons[1].setPos(500,140);
         drawFrames = new TextureRegion[25];
+        drawFramesmenu = new TextureRegion[14];
         buttons[2] = new Button(exit);
 
 
-        buttons[2].setPos(525,80);
+        buttons[2].setPos(500,80);
         for(int i=1;i<=25;i++){
             drawFrames[i-1]=new TextureRegion(new Texture(Gdx.files.internal("anim/"+i+".png")));
         }
+        for(int i=1;i<=14;i++){
+            drawFramesmenu[i-1]=new TextureRegion(new Texture(Gdx.files.internal("animm/"+i+".png")));
+        }
         drawAnimation = new Animation(0.15f, drawFrames);
+        drawAnimationm = new Animation(0.15f, drawFramesmenu);
         // TextureRegionDrawable trd=new TextureRegionDrawable(new TextureRegion(new Texture(textSkin.get("backgroundtext"))));
 
         // Stack stack = new Stack();
@@ -254,13 +260,14 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
     public void update(float dt) {
 
     }
-
+    int flags=1;int xx=400;
     @Override
     public void render() {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stateTime += Gdx.graphics.getDeltaTime();           // #15
-        currentFrame = drawAnimation.getKeyFrame(stateTime, true);  // #16
+        currentFrame = drawAnimation.getKeyFrame(stateTime, true);
+        currentFrame2 = drawAnimationm.getKeyFrame(stateTime, true);// #16
         stage.act();
         sb.begin();
 
@@ -268,12 +275,26 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         sb.setProjectionMatrix(cam.combined);
 
         sb.draw(background, 0, 0);
-        sb.draw(wood, 400, 0);
-        buttons[0].draw(sb);
-        buttons[1].draw(sb);
-        buttons[2].draw(sb);
+       // sb.draw(wood, 400, 0);
+        sb.draw(logo, xx,350);
+        if(xx>10)
+        xx-=2;
+
         sb.draw(currentFrame, 50, 50, 500,200);
-        sb.draw(logo, 10,350);
+        if(flags==1)
+        if(currentFrame2.equals(drawFramesmenu[13])){
+            flags=0;
+        }
+        if(flags==1)
+        sb.draw(currentFrame2,0,0);
+        else {
+            sb.draw(drawFramesmenu[13],0,0);
+            buttons[0].draw(sb);
+            buttons[1].draw(sb);
+            buttons[2].draw(sb);
+
+        }
+
 
         //Create dialog box
         if (dialog == 1 ){
@@ -394,7 +415,7 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         if(dbuttons[0].isPressed(touchPos) && dialog==1){
             System.out.println("Yes pressed");
             dbuttons[0] = new Button(yeson);
-            dbuttons[0].setPos(150,165);
+            dbuttons[0].setPos(165,165);
             y=1;
             //gsm.setState(GameStateManager.PLAY);
             return true;

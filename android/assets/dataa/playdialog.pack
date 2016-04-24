@@ -6,8 +6,8 @@ repeat: none
 text
   rotate: false
   xy: 1, 75
-  size: 320, 45
-  orig: 320, 45
+  size: 320, 60
+  orig: 320, 60
   offset: 0, 0
   index: -1
 resoff

@@ -33,8 +33,6 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -44,8 +42,8 @@ import com.cgossip.psyphysics.view.Button;
 
 import org.json.JSONException;
 import org.json.simple.JSONArray;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -269,18 +267,18 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		font.setColor(0, 0, 0, 1);
 		lfont = new BitmapFont(Gdx.files.internal("dataa/bb.fnt"),false);
 		lfont.setColor(255, 0, 0, 1);
-		soundon=new TextureRegion(textatlas.findRegion("volon"));
-		soundoff=new TextureRegion(textatlas.findRegion("voloff"));
-		back = new TextureRegion(textatlas.findRegion("undo"));
-		menu=new TextureRegion(textatlas.findRegion("menu"));
+		soundon=new TextureRegion(new Texture(Gdx.files.internal("dataa/filled.png")));
+		soundoff=new TextureRegion(new Texture(Gdx.files.internal("dataa/mute.png")));
+		back = new TextureRegion(new Texture(Gdx.files.internal("dataa/undo1.png")));
+		menu=new TextureRegion(new Texture(Gdx.files.internal("dataa/menu.png")));
 
 		buttons = new Button[5];
 		buttons[0] = new Button(soundon);
-		buttons[0].setPos(10, 400);
+		buttons[0].setPos(18, 400);
 		buttons[1] = new Button(back);
-		buttons[1].setPos(680, 400);
+		buttons[1].setPos(660, 400);
 		buttons[2] = new Button(menu);
-		buttons[2].setPos(750, 400);
+		buttons[2].setPos(735, 400);
 
 
 		dtatlas = new TextureAtlas("dataa/playdialog.pack");
@@ -296,7 +294,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		dbuttons[0] = new Button(resoff);
 		dbuttons[0].setPos(150,165);
 		dbuttons[1] = new Button(menuoff);
-		dbuttons[1].setPos(430,160);
+		dbuttons[1].setPos(400,152);
 
 		dialogback = new Texture(Gdx.files.internal("dataa/dialogback.png"));
 		close = new TextureRegion(new Texture(Gdx.files.internal("dataa/cross.png")));
@@ -730,13 +728,13 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 
 				com.cgossip.psyphysics.main.Game.rainMusic.pause();
 				buttons[0] = new Button(soundoff);
-				buttons[0].setPos(10, 400);
+				buttons[0].setPos(20, 400);
 			}
 			else {
 				vol = true;
 				com.cgossip.psyphysics.main.Game.rainMusic.play();
 				buttons[0] = new Button(soundon);
-				buttons[0].setPos(10, 400);
+				buttons[0].setPos(18, 400);
 			}
 			return true;
 		}
@@ -773,7 +771,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		if(dbuttons[1].isPressed(touchPos) && dialog==1){
 			System.out.println("Menu pressed");
 			dbuttons[1] = new Button(menuon);
-			dbuttons[1].setPos(430,160);
+			dbuttons[1].setPos(400,152);
 			me=1;
 			//gsm.setState(GameStateManager.MENU);
 			return true;

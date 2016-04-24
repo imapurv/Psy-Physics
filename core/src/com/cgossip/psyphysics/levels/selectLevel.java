@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -47,7 +46,7 @@ public class selectLevel extends GameState implements InputProcessor,Application
     public static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"´`'<>";
     public selectLevel(final GameStateManager gsm) {
         super(gsm);
-        close=new Texture(Gdx.files.internal("dataa/cross.png"));
+        close=new Texture(Gdx.files.internal("dataa/undo.png"));
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         background =new Texture(Gdx.files.internal("dataa/levelback.png"));
         buton =new Texture(Gdx.files.internal("dataa/buttonon.png"));
