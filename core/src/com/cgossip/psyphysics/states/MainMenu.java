@@ -2,6 +2,7 @@ package com.cgossip.psyphysics.states;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -83,32 +84,37 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
     private Stage stage; //** stage holds the Button **//
     private BitmapFont font;
     private TextureAtlas buttonsAtlas; //** image of buttons **//
-    private Skin buttonSkin,textSkin; //** images are used as skins of the button **//
+    private Skin buttonSkin,textSkin,dialogskin; //** images are used as skins of the button **//
     private TextButton button;
     TextureRegion logo,play,credit,exit;
     Table root;
     float stateTime;
     TextureRegion                   currentFrame;           // #7
     TextureRegion[]                 drawFrames;
-    Texture background,wood;
+    Texture background,wood,dialogback;
     Animation drawAnimation;
-    private TextureAtlas textatlas;
+    private TextureAtlas textatlas,dialogatlas;
     private Viewport viewport;
     private OrthographicCamera camera;
     public Button buttons[];
+    TextureRegion texte;
     public MainMenu(final GameStateManager gsm) {
         super(gsm);
-        background =new Texture(Gdx.files.internal("background.jpg"));
-
+        background =new Texture(Gdx.files.internal("dataa/newbackground.png"));
+        dialogback=new Texture(Gdx.files.internal("dataa/dialogback.png"));
+        dialogatlas = new TextureAtlas("dataa/dialoga.atlas");
         buttonsAtlas = new TextureAtlas("dataa/button.pack"); //**button atlas image **//
         textatlas = new TextureAtlas("dataa/text.atlas");
         wood=new Texture(Gdx.files.internal("dataa/wood.png"));
+        texte=new TextureRegion(dialogatlas.findRegion("exit"));
+
         camera = new OrthographicCamera();
         camera.setToOrtho(false, com.cgossip.psyphysics.main.Game.V_WIDTH , com.cgossip.psyphysics.main.Game.V_HEIGHT );
 
         root = new Table();
         root.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
+        dialogskin=new Skin();
+        dialogskin.addRegions(dialogatlas);
 
         buttonSkin = new Skin();
         buttonSkin.addRegions(buttonsAtlas); //** skins for on and off **//
@@ -124,6 +130,10 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         TextButton.TextButtonStyle style = new TextButton.TextButtonStyle(); //** Button properties **//
         style.up = buttonSkin.getDrawable("buttonOff");
         style.down = buttonSkin.getDrawable("buttonOn");
+
+       // TextButton.TextButtonStyle styleexit = new TextButton.TextButtonStyle(); //** Button properties **//
+      //  style.up = buttonSkin.getDrawable("buttonOff");
+       // style.down = buttonSkin.getDrawable("buttonOn");
 
         style.font = font;
 
@@ -214,6 +224,7 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         my.addAction(moveActions);
        // stage.addActor(my);
         Gdx.input.setInputProcessor(this);
+        Gdx.input.setCatchBackKey(true);
     }
 
 
@@ -247,7 +258,11 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         buttons[2].draw(sb);
         sb.draw(currentFrame, 50, 50, 500,200);
         sb.draw(logo, 10,350);
-
+        if(backf==1){
+            sb.draw(dialogback, 0,0);
+            sb.draw(texte,450,110);
+           // texte.
+        }
         //stage.draw();
         sb.end();
 
@@ -290,9 +305,13 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
     public void resize(int w, int h) {
         // viewport.update(w,h);
     }
-
+    int backf=0;
     @Override
     public boolean keyDown(int keycode) {
+        if(keycode == Input.Keys.BACK){
+            backf=backf^1;
+            return true;
+        }
         return false;
     }
 
@@ -303,6 +322,11 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
 
     @Override
     public boolean keyTyped(char character) {
+        if(character=='c'){
+            backf=backf^1;
+            return true;
+        }
+
         return false;
     }
 

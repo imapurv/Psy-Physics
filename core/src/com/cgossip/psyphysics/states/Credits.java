@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -53,21 +54,26 @@ public class Credits extends GameState implements InputProcessor,ApplicationList
     private TextureAtlas textatlas;
     private Viewport viewport;
     private OrthographicCamera camera;
-    public Button buttons[];
+    public Button buttonsc;
     TextureRegion tx,ty;
+    TextureRegion back;
+
     public Credits(final GameStateManager gsm) {
 
         super(gsm);
         background =new Texture(Gdx.files.internal("dataa/credits.png"));
-
+        back=new TextureRegion(new Texture(Gdx.files.internal("dataa/cross.png")));
         tx=new TextureRegion(background);
         tx.setRegionHeight(480);
         tx.setRegionWidth(800);
         wood=new Texture(Gdx.files.internal("dataa/roll.png"));
         ty=new TextureRegion(wood);
-
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, com.cgossip.psyphysics.main.Game.V_WIDTH , com.cgossip.psyphysics.main.Game.V_HEIGHT );
         ty.setRegionHeight(480);
         ty.setRegionWidth(800);
+        buttonsc=new Button(back);
+        buttonsc.setPos(720,420);
         //camera = new OrthographicCamera();
         //camera.setToOrtho(false, Game.V_WIDTH, Game.V_HEIGHT);
         // cam = new OrthographicCamera();
@@ -106,7 +112,8 @@ public class Credits extends GameState implements InputProcessor,ApplicationList
         //  currentFrame = drawAnimation.getKeyFrame(stateTime, true);  // #16
         System.out.println(stateTime);
         sb.begin();
-
+        cam.update();
+        sb.setProjectionMatrix(cam.combined);
         // cam.update();
         // sb.setProjectionMatrix(cam.combined);
         //  ss=new Sprite(background);
@@ -129,7 +136,7 @@ public class Credits extends GameState implements InputProcessor,ApplicationList
         ss=new Sprite(background);
         ss.setSize(800, 480);
         ss.draw(sb);
-
+        buttonsc.draw(sb);
         // Texture t=new Texture(ss);
         // sb.setColor(1.0f, 1.0f, 1.0f, 1);
         //  sb.draw(tx, 800, 480);
@@ -229,7 +236,18 @@ public class Credits extends GameState implements InputProcessor,ApplicationList
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        Vector3 touchPos = new Vector3();
+        touchPos.set(screenX, screenY, 0);
+        camera.unproject(touchPos);
+        System.out.println(touchPos.x + " " + touchPos.y);
+        //  System.out.println(buttons[0].isPressed(touchPos));
+        System.out.println(touchPos.x + " " + touchPos.y);
+        if(buttonsc.isPressed(touchPos)){
+            System.out.println("Hwre");
+            gsm.setState(GameStateManager.MENU);
+            return true;
 
+        }
         return false;
     }
 
