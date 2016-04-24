@@ -102,7 +102,7 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
 
     public MainMenu(final GameStateManager gsm) {
         super(gsm);
-        background =new Texture(Gdx.files.internal("dataa/newbackground.png"));
+        background =new Texture(Gdx.files.internal("newui/background1.png"));
         dialogback=new Texture(Gdx.files.internal("dataa/dialogback.png"));
         buttonsAtlas = new TextureAtlas("dataa/button.pack"); //**button atlas image **//
         textatlas = new TextureAtlas("dataa/text.atlas");
@@ -196,14 +196,14 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
 
 
         //Image imaget = new Image(textSkin.getDrawable("backgroundtext"));
-        logo=new TextureRegion(textatlas.findRegion("backgroundtext"));
-        play=new TextureRegion(textatlas.findRegion("play"));
-        credit=new TextureRegion(textatlas.findRegion("credit"));
+        logo=new TextureRegion(new Texture(Gdx.files.internal("newui/logo.png")));
+        play=new TextureRegion(new Texture(Gdx.files.internal("newui/play.png")));
+        credit=new TextureRegion(new Texture(Gdx.files.internal("newui/credit.png")));
         exit=new TextureRegion(textatlas.findRegion("exit"));
         buttons = new Button [3];
         buttons[0] = new Button(play);
 
-        buttons[0].setPos(500,200);
+        buttons[0].setPos(500,225);
         buttons[1] = new Button(credit);
         buttons[1].setPos(500,140);
         drawFrames = new TextureRegion[25];
@@ -276,42 +276,25 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
 
         sb.draw(background, 0, 0);
        // sb.draw(wood, 400, 0);
-        sb.draw(logo, xx,350);
+        sb.draw(logo,10,350);
 
-        if (xf == 0) {
-            if (xx > 10)
-                xx -= 2;
 
-            else if (xxx > 0) {
-                //xx = xxx;
-                xxx -= 100;
-                xf=1;
-            }
-        }
-        else {
-            if (xx < xxx)
-                xx+=2;
-
-            else {
-                xf = 0;
-            }
-        }
 
         sb.draw(currentFrame, 50, 50, 500,200);
         if(flags==1)
         if(currentFrame2.equals(drawFramesmenu[13])){
             flags=0;
         }
-        if(flags==1)
-        sb.draw(currentFrame2,0,0);
-        else {
-            sb.draw(drawFramesmenu[13],0,0);
-            buttons[0].draw(sb);
-            buttons[1].draw(sb);
-            buttons[2].draw(sb);
+       // if(flags==1)
+        //sb.draw(currentFrame2,0,0);
+        //else {
+            //sb.draw(drawFramesmenu[13], 0, 0);
 
-        }
 
+        //}
+        buttons[0].draw(sb);
+        buttons[1].draw(sb);
+        buttons[2].draw(sb);
 
         //Create dialog box
         if (dialog == 1 ){
@@ -391,7 +374,7 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
 
     int y=0,n=0;
     int dialog = 0;
-
+    int playbb=0;
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 
@@ -445,11 +428,33 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
             //gsm.setState(GameStateManager.MENU);
             return true;
         }
+        if(buttons[0].isPressed(touchPos)){
+            buttons[0]=new Button(new TextureRegion(new Texture(Gdx.files.internal("newui/playpressed.png"))));
+            buttons[0].setPos(500,225);
+            System.out.println("Hwre");
+            //gsm.setState(GameStateManager.SELECTLEVEL);
+            playbb=1;
+        }
+        if(buttons[1].isPressed(touchPos)){
+            buttons[1]=new Button(new TextureRegion(new Texture(Gdx.files.internal("newui/creditpressed.png"))));
+            buttons[1].setPos(500, 140);
+            System.out.println("Hwre");
+
+            playbb=2;
+        }
+        if(buttons[2].isPressed(touchPos)){
+            buttons[2]=new Button(new TextureRegion(new Texture(Gdx.files.internal("newui/creditpressed.png"))));
+            buttons[2].setPos(500, 140);
+            System.out.println("Hwre");
+
+            playbb=3;
+        }
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        System.out.println("Comming");
         if (y == 1) {
             System.out.println("Yes pressed");
             Gdx.app.exit();
@@ -466,12 +471,12 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         System.out.println(touchPos.x + " " + touchPos.y);
         //  System.out.println(buttons[0].isPressed(touchPos));
         System.out.println(touchPos.x + " " + touchPos.y);
-        if(buttons[0].isPressed(touchPos)){
-            System.out.println("Hwre");
+        if(playbb==1){
+
             gsm.setState(GameStateManager.SELECTLEVEL);
 
         }
-        if(buttons[1].isPressed(touchPos)){
+        if(playbb==2){
             System.out.println("Hwre");
             gsm.setState(GameStateManager.CREDITS);
 

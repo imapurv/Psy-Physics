@@ -39,7 +39,7 @@ public class selectLevel extends GameState implements InputProcessor,Application
     private TextButton button[];
     private Stage stage;
     private OrthographicCamera camera;
-    private Texture background,buton,butoff;
+    private Texture background,buton,butoff,ontop;
     Texture close;
     Skin skin;
     BitmapFont font;
@@ -48,7 +48,8 @@ public class selectLevel extends GameState implements InputProcessor,Application
         super(gsm);
         close=new Texture(Gdx.files.internal("dataa/undo.png"));
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
-        background =new Texture(Gdx.files.internal("dataa/levelback.png"));
+        background =new Texture(Gdx.files.internal("newui/background1.png"));
+        ontop=new Texture(Gdx.files.internal("newui/lvlbackground.png"));
         buton =new Texture(Gdx.files.internal("dataa/buttonon.png"));
         butoff =new Texture(Gdx.files.internal("dataa/buttonoff.png"));
 
@@ -58,7 +59,7 @@ public class selectLevel extends GameState implements InputProcessor,Application
         textatlas = new TextureAtlas("dataa/text.atlas");
        // textSkin= new Skin();
        // textSkin.addRegions(textatlas);
-        font = new BitmapFont(Gdx.files.internal("dataa/bb.fnt"),false); //** font **//
+        font = new BitmapFont(Gdx.files.internal("newui/skikaria.fnt"),false); //** font **//
        // font = TrueTypeFontFactory.createBitmapFont(Gdx.files.internal("dataa/crayon.ttf"), FONT_CHARACTERS, 12.5f, 7.5f, 1.0f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         font.setColor(1f, 1f, 1f, 1f);
         //font.getData().setScale(1,1);
@@ -102,13 +103,13 @@ public class selectLevel extends GameState implements InputProcessor,Application
         Gdx.input.setCatchBackKey(true);
 
         TextButton.TextButtonStyle cstyle = new TextButton.TextButtonStyle();
-        cstyle.up = new TextureRegionDrawable(new TextureRegion(close));
+
         cstyle.font = font;
 
         TextButton buttonc = new TextButton("  ",cstyle);
         buttonc.setHeight(50);
-        buttonc.setWidth(50);
-        buttonc.setPosition(720, 420);
+        buttonc.setWidth(65);
+        buttonc.setPosition(207, 32);
         buttonc.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -123,19 +124,19 @@ public class selectLevel extends GameState implements InputProcessor,Application
         stage.addActor(buttonc);
 
         TextButton.TextButtonStyle style = new TextButton.TextButtonStyle(); //** Button properties **//
-        style.up = new TextureRegionDrawable(new TextureRegion(butoff));
-        style.down = new TextureRegionDrawable(new TextureRegion(buton));
+        style.up = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("newui/lvlbuttonback.png"))));
+        style.down = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("newui/buttonpressed.png"))));
         style.font = font;
 
         button = new TextButton[lvl+1];
         buttons = new Button [lvl+1];
-        int pre=50;
-        int next=300;
+        int pre=140;
+        int next=270;
         for(int i=0;i<lvl;i++){
             final int g=i;
             button[i]= new TextButton(""+(i+1)+"",style);
             button[i].setHeight(80); //** Button Height **//
-            button[i].setWidth(130); //** Button Width **//
+            button[i].setWidth(85); //** Button Width **//
             button[i].setPosition(pre,next);
             button[i].addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -147,10 +148,10 @@ public class selectLevel extends GameState implements InputProcessor,Application
                     gsm.setState(GameStateManager.PLAY);
                 }
             });
-            pre+=130;
+            pre+=102;
             if((i+1)%5==0){
-                next-=100;
-                pre=50;
+                next-=85;
+                pre=140;
             }
             stage.addActor(button[i]);
         }
@@ -186,6 +187,8 @@ public class selectLevel extends GameState implements InputProcessor,Application
         sb.setProjectionMatrix(cam.combined);
         sb.begin();
         sb.draw(background, 0, 0, 800, 480);
+        sb.draw(ontop,70,10);
+
         sb.end();
         sb.begin();
 
