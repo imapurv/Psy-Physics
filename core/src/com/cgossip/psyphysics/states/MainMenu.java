@@ -260,7 +260,7 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
     public void update(float dt) {
 
     }
-    int flags=1;int xx=400;
+    int flags=1;int xxx=350, xx=400,xf=0;
     @Override
     public void render() {
         Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -277,8 +277,25 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         sb.draw(background, 0, 0);
        // sb.draw(wood, 400, 0);
         sb.draw(logo, xx,350);
-        if(xx>10)
-        xx-=2;
+
+        if (xf == 0) {
+            if (xx > 10)
+                xx -= 2;
+
+            else if (xxx > 0) {
+                //xx = xxx;
+                xxx -= 100;
+                xf=1;
+            }
+        }
+        else {
+            if (xx < xxx)
+                xx+=2;
+
+            else {
+                xf = 0;
+            }
+        }
 
         sb.draw(currentFrame, 50, 50, 500,200);
         if(flags==1)

@@ -110,7 +110,7 @@ public class Credits extends GameState implements InputProcessor,ApplicationList
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stateTime += Gdx.graphics.getDeltaTime();           // #15
         //  currentFrame = drawAnimation.getKeyFrame(stateTime, true);  // #16
-        System.out.println(stateTime);
+        //System.out.println(stateTime);
         sb.begin();
         cam.update();
         sb.setProjectionMatrix(cam.combined);
