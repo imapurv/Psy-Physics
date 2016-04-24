@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -21,10 +22,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.cgossip.psyphysics.handlers.GameStateManager;
 import com.cgossip.psyphysics.states.GameState;
 import com.cgossip.psyphysics.view.Button;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  * Created by HP on 30-03-2016.
@@ -58,7 +62,37 @@ public class selectLevel extends GameState implements InputProcessor,Application
         font.setColor(1f, 1f, 1f, 1f);
         //font.getData().setScale(1,1);
 
+        /*
+        FileWriter file = null;
+        try {
+            file = new FileWriter(String.valueOf(Gdx.files.internal("json/lvlstatus.json")));
+            JSONObject objs = new JSONObject();
+            try {
+                objs.put("Current",1);
 
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            file.write(objs.toString());
+            file.flush();
+            file.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        */
+        FileHandle fileHandle = Gdx.files.internal("json/lvlstatus.json");
+        String s = new String(fileHandle.readString());
+        JSONParser parser = new JSONParser();
+        Object obj = null;
+        try {
+            obj = parser.parse(s);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        JSONObject jsonObject = (JSONObject) obj;
+        int lvl=((Long)jsonObject.get("Current")).intValue();
+        gsm.setTOTAlLEVEL(lvl);
+      //  gsm.setCURLEVEL(lvl);
 
 
         stage = new Stage(new StretchViewport(800, 480));        //** window is stage **//
@@ -71,15 +105,16 @@ public class selectLevel extends GameState implements InputProcessor,Application
         style.down = new TextureRegionDrawable(new TextureRegion(buton));
         style.font = font;
 
-        button = new TextButton[5];
-        buttons = new Button [5];
+        button = new TextButton[lvl+1];
+        buttons = new Button [lvl+1];
         int pre=50;
-        for(int i=0;i<6-1;i++){
+        int next=300;
+        for(int i=0;i<lvl;i++){
             final int g=i;
             button[i]= new TextButton(""+(i+1)+"",style);
             button[i].setHeight(80); //** Button Height **//
             button[i].setWidth(130); //** Button Width **//
-            button[i].setPosition(pre, 300);
+            button[i].setPosition(pre,next);
             button[i].addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     return true;
@@ -91,6 +126,10 @@ public class selectLevel extends GameState implements InputProcessor,Application
                 }
             });
             pre+=130;
+            if((i+1)%5==0){
+                next-=100;
+                pre=50;
+            }
             stage.addActor(button[i]);
         }
        /*

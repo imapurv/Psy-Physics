@@ -16,6 +16,16 @@ public class GameStateManager {
 	public static final int SELECTLEVEL = 975234;
 	public static final int CREDITS = 912832;
 	public static int CURLEVEL = 1;
+
+	public static int getTOTAlLEVEL() {
+		return TOTAlLEVEL;
+	}
+
+	public static void setTOTAlLEVEL(int TOTAlLEVEL) {
+		GameStateManager.TOTAlLEVEL = TOTAlLEVEL;
+	}
+
+	public static int TOTAlLEVEL;
 	
 	public GameStateManager(com.cgossip.psyphysics.main.Game game) {
 		this.game = game;

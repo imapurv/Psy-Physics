@@ -40,10 +40,12 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.cgossip.psyphysics.handlers.GameStateManager;
 import com.cgossip.psyphysics.view.Button;
 
+import org.json.JSONException;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.JSONObject;
 
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -63,13 +65,35 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	private OrthographicCamera b2dCam;
 	private OrthographicCamera camera;
 	int width,height;
+	int hogaya=1;
+	public synchronized boolean dowork()throws Exception{
 
+		int a=GameStateManager.getCURLEVEL()+1;
+		if (a==12){
+			gsm.setState(GameStateManager.SELECTLEVEL);
+			return false;
+		}
+		FileWriter file = new FileWriter(String.valueOf(Gdx.files.internal("json/lvlstatus.json")));
+		org.json.JSONObject objs = new org.json.JSONObject();
+		try {
+			objs.put("Current",a);
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		file.write(objs.toString());
+		file.flush();
+		file.close();
+		GameStateManager.setTOTAlLEVEL(a);
+		return true;
+	}
 	private Body createPhysicBodies(Array<Vector2> input, World world) {
 		System.out.println("Size :" + input.size);
 		if (input.size <= 2) {
 
 			return null;
 		}
+
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DynamicBody;
 		//System.out.println();
@@ -102,9 +126,24 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 						@Override
 						public void run() {
 							// Do your work
+							if(hogaya==1) {
+								hogaya = 0;
+								FileWriter file = null;
+								if(GameStateManager.getCURLEVEL()==GameStateManager.getTOTAlLEVEL()){
+									try {
 
-							GameStateManager.setCURLEVEL(GameStateManager.getCURLEVEL() + 1);
-							gsm.setState(GameStateManager.PLAY);
+										if(!dowork()){
+											return;
+										}
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
+								}
+								GameStateManager.setCURLEVEL(GameStateManager.getCURLEVEL() + 1);
+								gsm.setState(GameStateManager.PLAY);
+
+
+							}
 						}
 					}, 3);
 				}
@@ -401,6 +440,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	Texture pixmaptex;
 	Sprite sss;
 	public static Sprite starsp,ballsp;
+	Sprite runtimesp,staticsp;
 	public void render() {
 
 
@@ -410,10 +450,10 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 
 
 		//Update level according to the position of ball
-		if (bodycircle.getPosition().y < -10){
+		if (bodycircle.getPosition().y < -50){
 			System.out.println("Update the level");
 			//GameStateManager.setCURLEVEL(GameStateManager.getCURLEVEL()+1);
-			gsm.pushState(GameStateManager.PLAY);
+			gsm.setState(GameStateManager.PLAY);
 		}
 
 
@@ -437,7 +477,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		cam.update();
 		sb.setProjectionMatrix(cam.combined);
 		try {
-			for (int i = 0; i < tall.size(); i++) {
+			for (int i = 0; i < spriteall.size(); i++) {
 				sss = spriteall.get(i);
 				sss.setOrigin(all.get(i).getLocalCenter().x, all.get(i).getLocalCenter().y);
 				//sss.setOrigin(sss.getWidth()/2,sss.getHeight()/2);
@@ -456,8 +496,9 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 			}
 		}
 		catch (Exception e){}
-		Sprite ts = new Sprite(statictexture);
-		ts.draw(sb);
+		//Sprite ts = new Sprite(statictexture);
+		staticsp.draw(sb);
+		//ts.draw(sb);
 		ballsp = (Sprite) bodycircle.getUserData();
 		//Vector2 bottlePos = bodycircle.getPosition();
 		ballsp.setOrigin(ballsp.getWidth() / 2, ballsp.getHeight() / 2);
@@ -510,7 +551,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		//System.out.println("Did");
 
 		//pixmaptex.dispose();
-		font.draw(sb, String.valueOf(20 - all.size()), 10, 50);
+		font.draw(sb, String.valueOf(10 - all.size()), 10, 50);
 		//System.out.println(war);
 		if(war>0){
 
@@ -546,7 +587,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	public void dispose() {
 		for (int i = 0; i < spriteall.size(); i++) {
 			spriteall.get(i).getTexture().dispose();
-			tall.get(i).dispose();
+			//tall.get(i).dispose();
 		}
 		statictexture.dispose();
 		try {
@@ -747,7 +788,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		ar.add(new Vector2(x / com.cgossip.psyphysics.handlers.B2DVars.PPM, y / com.cgossip.psyphysics.handlers.B2DVars.PPM));
 		//updatePoints(ar, world);
 		Body bbs=null;
-		if(20-all.size()-1>=0){
+		if(10-all.size()-1>=0){
 			bbs=createPhysicBodies(ar,world);
 		}
 		else{
@@ -760,9 +801,11 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		// pixmap.scale
 		if(bbs!=null){
 			pixmaptex = new Texture(pixmap);
-			tall.add(pixmaptex);
+			//tall.add(pixmaptex);
 			spriteall.add(new Sprite(pixmaptex));
 			//pixmaptex.dispose();
+			//tall.clear();v
+
 
 		}
 		pixmap.dispose();
@@ -945,7 +988,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		System.out.println("Oneeee");
 
 		//Check level to be displayed
-		String selLev = "json/level1.json";
+
 /*
       FileHandle readF = Gdx.files.internal("json/curlevel.txt");
       String lno;
@@ -953,14 +996,8 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
       int ln = Integer.parseInt(lno);
 */
 		int ln = GameStateManager.getCURLEVEL();
-		if (ln == 2)
-			selLev = "json/level2.json";
-		if (ln == 3)
-			selLev = "json/level3.json";
-		if (ln == 4)
-			selLev = "json/level4.json";
-		if (ln == 5)
-			selLev = "json/level5.json";
+		String selLev = "json/level"+ln+".json";
+
 		System.out.println("I got it");
 		FileHandle fileHandle = Gdx.files.internal(selLev);
 		String s = new String(fileHandle.readString());
@@ -971,7 +1008,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		System.out.println("Twoooo");
 		tttext = new ArrayList<Vector2>();
 
-		JSONObject jsonObject = (JSONObject) obj;
+		org.json.simple.JSONObject jsonObject = (JSONObject) obj;
 
 
 		JSONObject ball=(JSONObject)jsonObject.get("Ball");
@@ -1001,6 +1038,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 			drawLerped(tttext.get(i), tttext.get(i + 1));
 		}
 		statictexture = new Texture(pixmap);
+		staticsp=new Sprite(statictexture);
 		System.out.println("Three");
 		pixmap.dispose();
 		texture = (JSONArray) jsonObject.get("Points");
