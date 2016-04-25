@@ -729,6 +729,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	int res=0;
 	int me=0;
 	int unf=0,mf=0;
+	int closef=0;
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		res = 0;
@@ -808,7 +809,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		}
 		if (dbuttons[2].isPressed(touchPos) && dialog == 1){
 			System.out.println("Close");
-			dialog=0;
+			closef = 1;
 			return true;
 		}
 
@@ -847,8 +848,6 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	boolean vol = true;
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		if (dialog == 1)
-			return false;
 		if(unf==1){
 			buttons[1] = new Button(back);
 			buttons[1].setPos(660, 400);
@@ -885,6 +884,11 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 			gsm.setState(GameStateManager.MENU);
 			return true;
 		}
+		if (closef == 1){
+			 closef=0;
+			dialog=0;
+			return true;
+		}
 		Vector3 touchPos = new Vector3();
 		System.out.println("In touch up");
 		b2dCam.unproject(touchPos.set(screenX, screenY, 0));
@@ -916,16 +920,20 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 			catch (Exception e){}
 			//pixmap.scaled(1000, 600);
 			// pixmap.scale
-			if (bbs != null) {
-				pixmaptex = new Texture(pixmap);
-				//tall.add(pixmaptex);
-				spriteall.add(new Sprite(pixmaptex));
-				//pixmaptex.dispose();
-				//tall.clear();v
-
-
+			try {
+				if (bbs != null) {
+					pixmaptex = new Texture(pixmap);
+					//tall.add(pixmaptex);
+					spriteall.add(new Sprite(pixmaptex));
+					//pixmaptex.dispose();
+					//tall.clear();v
+				}
 			}
-			pixmap.dispose();
+			catch (Exception e){}
+			try {
+				pixmap.dispose();
+			}
+			catch (Exception e){}
 			//pixmaptex.dispose();
 			//createPhysicBodies(ar,world);
 			//createbody(ar, world);
