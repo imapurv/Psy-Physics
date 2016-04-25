@@ -16,6 +16,16 @@ public class GameStateManager {
 	public static final int SELECTLEVEL = 975234;
 	public static final int CREDITS = 912832;
 	public static int CURLEVEL = 1;
+	public static int score;
+	public static final int LEVELCLEAR = 912835;
+
+	public static int getScore() {
+		return score;
+	}
+
+	public static void setScore(int score) {
+		GameStateManager.score = score;
+	}
 
 	public static int getTOTAlLEVEL() {
 		return TOTAlLEVEL;
@@ -33,6 +43,7 @@ public class GameStateManager {
 
 		//pushState(PLAY);
 		pushState(MENU);
+		//pushState(LEVELCLEAR);
 		//pushState(CREATE);
 		//pushState(SELECTLEVEL);
 	}
@@ -65,6 +76,7 @@ public class GameStateManager {
 		if(state == CREATE) return new com.cgossip.psyphysics.states.Create(this);
 		if(state==CREDITS) return new com.cgossip.psyphysics.states.Credits(this);
 		if (state == SELECTLEVEL) return new com.cgossip.psyphysics.levels.selectLevel(this);
+		if (state == LEVELCLEAR) return new com.cgossip.psyphysics.levels.levelcleared(this);
 		return null;
 	}
 	
