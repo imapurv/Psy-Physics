@@ -97,8 +97,8 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
     private TextureAtlas textatlas,dialogatlas;
     private Viewport viewport;
     private OrthographicCamera camera;
-    public Button buttons[],dbuttons[];
-    TextureRegion texte,yesoff,yeson,nooff,noon;
+    public Button buttons[],dbuttons[],ibut;
+    TextureRegion texte,yesoff,yeson,nooff,noon,exitp,fb,gp,info,infop,ipanel,close;
 
     public MainMenu(final GameStateManager gsm) {
         super(gsm);
@@ -107,21 +107,30 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         buttonsAtlas = new TextureAtlas("dataa/button.pack"); //**button atlas image **//
         textatlas = new TextureAtlas("dataa/text.atlas");
         wood=new Texture(Gdx.files.internal("dataa/wood.png"));
+        fb = new TextureRegion(new Texture(Gdx.files.internal("newui/facebook.png")));
+        gp = new TextureRegion(new Texture(Gdx.files.internal("newui/googleplus.png")));
+        info = new TextureRegion(new Texture(Gdx.files.internal("newui/info.png")));
+        infop = new TextureRegion(new Texture(Gdx.files.internal("newui/infopressed.png")));
+        ipanel = new TextureRegion(new Texture(Gdx.files.internal("newui/infopanel.png")));
+        close = new TextureRegion(new Texture(Gdx.files.internal("newui/cross.png")));
 
         dialogatlas = new TextureAtlas("dataa/dialoga.atlas");
         dialogskin = new Skin();
         dialogskin.addRegions(dialogatlas);
-        yesoff = new TextureRegion(dialogatlas.findRegion("yesoff"));
-        yeson = new TextureRegion(dialogatlas.findRegion("yeson"));
-        nooff = new TextureRegion(dialogatlas.findRegion("nooff"));
-        noon = new TextureRegion(dialogatlas.findRegion("noon"));
-        texte = new TextureRegion(dialogatlas.findRegion("exit"));
+        yesoff = new TextureRegion(new Texture(Gdx.files.internal("newui/yes.png")));
+        yeson = new TextureRegion(new Texture(Gdx.files.internal("newui/yespressed.png")));
+        nooff = new TextureRegion(new Texture(Gdx.files.internal("newui/no.png")));
+        noon = new TextureRegion(new Texture(Gdx.files.internal("newui/nopressed.png")));
+        texte = new TextureRegion(new Texture(Gdx.files.internal("newui/exitdialog.png")));
+
+        ibut = new Button(close);
+        ibut.setPos(200,400);
 
         dbuttons = new Button[3];
         dbuttons[0] = new Button(yesoff);
-        dbuttons[0].setPos(165,165);
+        dbuttons[0].setPos(450,160);
         dbuttons[1] = new Button(nooff);
-        dbuttons[1].setPos(430,160);
+        dbuttons[1].setPos(310,160);
 
         dialogback = new Texture(Gdx.files.internal("dataa/dialogback.png"));
 
@@ -199,19 +208,26 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         logo=new TextureRegion(new Texture(Gdx.files.internal("newui/logo.png")));
         play=new TextureRegion(new Texture(Gdx.files.internal("newui/play.png")));
         credit=new TextureRegion(new Texture(Gdx.files.internal("newui/credit.png")));
-        exit=new TextureRegion(textatlas.findRegion("exit"));
-        buttons = new Button [3];
-        buttons[0] = new Button(play);
+        exit=new TextureRegion(new Texture(Gdx.files.internal("newui/exit.png")));
+        exitp=new TextureRegion(new Texture(Gdx.files.internal("newui/exitpressed.png")));
 
-        buttons[0].setPos(500,225);
+        buttons = new Button [6];
+        buttons[0] = new Button(play);
+        buttons[0].setPos(350,220);
         buttons[1] = new Button(credit);
-        buttons[1].setPos(500,140);
+        buttons[1].setPos(7,22);
         drawFrames = new TextureRegion[25];
         drawFramesmenu = new TextureRegion[14];
         buttons[2] = new Button(exit);
+        buttons[2].setPos(583,22);
+        buttons[3] = new Button(fb);
+        buttons[3].setPos(630,400);
+        buttons[4] = new Button(gp);
+        buttons[4].setPos(710,400);
+        buttons[5] = new Button(info);
+        buttons[5].setPos(10,400);
 
 
-        buttons[2].setPos(500,80);
         for(int i=1;i<=25;i++){
             drawFrames[i-1]=new TextureRegion(new Texture(Gdx.files.internal("anim/"+i+".png")));
         }
@@ -261,6 +277,7 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
 
     }
     int flags=1;int xxx=350, xx=400,xf=0;
+    int si=0;
     @Override
     public void render() {
         Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -276,7 +293,7 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
 
         sb.draw(background, 0, 0);
        // sb.draw(wood, 400, 0);
-        sb.draw(logo,10,350);
+        sb.draw(logo,135,335);
 
 
 
@@ -295,12 +312,23 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         buttons[0].draw(sb);
         buttons[1].draw(sb);
         buttons[2].draw(sb);
+        buttons[3].draw(sb);
+        buttons[4].draw(sb);
+        buttons[5].draw(sb);
+
+        if (si == 1){
+
+            sb.draw(ipanel,20,225,250,203);
+            buttons[5].setPos(10, 400);
+            buttons[5].draw(sb);
+            ibut.draw(sb);
+        }
 
         //Create dialog box
         if (dialog == 1 ){
 
-            sb.draw(dialogback,0,0);
-            sb.draw(texte,160,250);
+            //sb.draw(dialogback,0,0);
+            sb.draw(texte,230,180);
             dbuttons[0].draw(sb);
             dbuttons[1].draw(sb);
         }
@@ -401,7 +429,7 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         n = 0;
         if (n == 0){
             dbuttons[1] = new Button(nooff);
-            dbuttons[1].setPos(430,160);
+            dbuttons[1].setPos(310,160);
         }
         Vector3 touchPos = new Vector3();
         camera.unproject(touchPos.set(screenX, screenY, 0));
@@ -415,7 +443,7 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         if(dbuttons[0].isPressed(touchPos) && dialog==1){
             System.out.println("Yes pressed");
             dbuttons[0] = new Button(yeson);
-            dbuttons[0].setPos(165,165);
+            dbuttons[0].setPos(450, 160);
             y=1;
             //gsm.setState(GameStateManager.PLAY);
             return true;
@@ -423,32 +451,35 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         if(dbuttons[1].isPressed(touchPos) && dialog==1){
             System.out.println("No pressed");
             dbuttons[1] = new Button(noon);
-            dbuttons[1].setPos(430,160);
+            dbuttons[1].setPos(310,160);
             n=1;
             //gsm.setState(GameStateManager.MENU);
             return true;
         }
         if(buttons[0].isPressed(touchPos)){
             buttons[0]=new Button(new TextureRegion(new Texture(Gdx.files.internal("newui/playpressed.png"))));
-            buttons[0].setPos(500,225);
+            buttons[0].setPos(350,220);
             System.out.println("Hwre");
             //gsm.setState(GameStateManager.SELECTLEVEL);
             playbb=1;
         }
         if(buttons[1].isPressed(touchPos)){
             buttons[1]=new Button(new TextureRegion(new Texture(Gdx.files.internal("newui/creditpressed.png"))));
-            buttons[1].setPos(500, 140);
+            buttons[1].setPos(7,22);
             System.out.println("Hwre");
 
             playbb=2;
         }
-        if(buttons[2].isPressed(touchPos)){
-            buttons[2]=new Button(new TextureRegion(new Texture(Gdx.files.internal("newui/creditpressed.png"))));
-            buttons[2].setPos(500, 140);
-            System.out.println("Hwre");
-
+        if (buttons[2].isPressed(touchPos)){
+            buttons[2] = new Button(exitp);
+            buttons[2].setPos(583,22);
+            System.out.println("Pressed exit");
             playbb=3;
         }
+        if (buttons[5].isPressed(touchPos)){
+           si=1;
+        }
+
         return false;
     }
 
@@ -463,6 +494,9 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         if (n == 1){
             System.out.println("No pressed");
             dialog = 0;
+            return true;
+        }
+        if(dialog==1){
             return true;
         }
         Vector3 touchPos = new Vector3();
@@ -481,10 +515,17 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
             gsm.setState(GameStateManager.CREDITS);
 
         }
-        if(buttons[2].isPressed(touchPos)){
-            System.out.println("Hwre");
-            //Gdx.app.exit();
+        if (playbb==3){
+            buttons[2] = new Button(exit);
+            buttons[2].setPos(583,22);
+            System.out.println("Exit dialog");
             dialog = 1;
+        }
+        playbb=0;
+        if (ibut.isPressed(touchPos) && si==1){
+            si=0;
+
+            buttons[5].setPos(10, 400);
         }
         return true;
     }

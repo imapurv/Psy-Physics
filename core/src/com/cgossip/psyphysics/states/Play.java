@@ -249,7 +249,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	Body bstar;
 
 	public Button buttons[],dbuttons[],buttonc;
-	private TextureRegion soundon,soundoff,back,menu,resoff,reson,menuoff,menuon,tex;
+	private TextureRegion soundon,soundoff,back,menu,resoff,reson,menuoff,menuon,tex,backoff,menup;
 	private TextureAtlas textatlas,dtatlas;
 	private BitmapFont font,lfont;;
 	private Skin textSkin,dtskin;
@@ -267,10 +267,12 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		font.setColor(0, 0, 0, 1);
 		lfont = new BitmapFont(Gdx.files.internal("dataa/bb.fnt"),false);
 		lfont.setColor(255, 0, 0, 1);
-		soundon=new TextureRegion(new Texture(Gdx.files.internal("dataa/filled.png")));
-		soundoff=new TextureRegion(new Texture(Gdx.files.internal("dataa/mute.png")));
-		back = new TextureRegion(new Texture(Gdx.files.internal("dataa/undo1.png")));
-		menu=new TextureRegion(new Texture(Gdx.files.internal("dataa/menu.png")));
+		soundon=new TextureRegion(new Texture(Gdx.files.internal("newui/volumeon.png")));
+		soundoff=new TextureRegion(new Texture(Gdx.files.internal("newui/mute.png")));
+		back = new TextureRegion(new Texture(Gdx.files.internal("newui/undo.png")));
+		backoff= new TextureRegion(new Texture(Gdx.files.internal("newui/undopressed.png")));
+		menu=new TextureRegion(new Texture(Gdx.files.internal("newui/menu.png")));
+		menup=new TextureRegion(new Texture(Gdx.files.internal("newui/menupressed.png")));
 
 		buttons = new Button[5];
 		buttons[0] = new Button(soundon);
@@ -284,27 +286,27 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		dtatlas = new TextureAtlas("dataa/playdialog.pack");
 		dtskin = new Skin();
 		dtskin.addRegions(dtatlas);
-		resoff = new TextureRegion(dtatlas.findRegion("resoff"));
-		reson = new TextureRegion(dtatlas.findRegion("reson"));
-		menuoff = new TextureRegion(dtatlas.findRegion("menuoff"));
-		menuon = new TextureRegion(dtatlas.findRegion("menuon"));
-		tex = new TextureRegion(dtatlas.findRegion("text"));
+		resoff = new TextureRegion(new Texture(Gdx.files.internal("newui/reload.png")));
+		reson = new TextureRegion(new Texture(Gdx.files.internal("newui/reloadpressed.png")));
+		menuoff = new TextureRegion(new Texture(Gdx.files.internal("newui/gomenu.png")));
+		menuon = new TextureRegion(new Texture(Gdx.files.internal("newui/gomenupressed.png")));
+		tex = new TextureRegion(new Texture(Gdx.files.internal("newui/playdialog.png")));
+		close = new TextureRegion(new Texture(Gdx.files.internal("newui/cross.png")));
 
 		dbuttons = new Button[3];
 		dbuttons[0] = new Button(resoff);
-		dbuttons[0].setPos(150,165);
+		dbuttons[0].setPos(280,210);
 		dbuttons[1] = new Button(menuoff);
-		dbuttons[1].setPos(400,152);
-
-		dialogback = new Texture(Gdx.files.internal("dataa/dialogback.png"));
-		close = new TextureRegion(new Texture(Gdx.files.internal("dataa/cross.png")));
+		dbuttons[1].setPos(450,210);
+		dbuttons[2] = new Button(close);
+		dbuttons[2].setPos(565,285);
 
 		buttonc = new Button(close);
 		buttonc.setPos(735,300);
 
 		end=new Texture(Gdx.files.internal("dataa/levelcom.png"));
 		tstar=  new Texture(Gdx.files.internal("dataa/star.png"));
-		img = new Texture(Gdx.files.internal("data/whiteback.jpg"));
+		img = new Texture(Gdx.files.internal("newui/backgroundplay.png"));
 		ball =new Texture(Gdx.files.internal("dataa/ball.png"));
 		world = new World(new Vector2(0, -9.81f), true);
 		b2dr = new Box2DDebugRenderer();
@@ -553,11 +555,11 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		//Create dialog box
 		if (dialog == 1 ){
 
-			sb.draw(dialogback,0,0);
-			sb.draw(tex,160,250);
+			//sb.draw(dialogback,0,0);
+			sb.draw(tex, 200, 180);
 			dbuttons[0].draw(sb);
 			dbuttons[1].draw(sb);
-			buttonc.draw(sb);
+			dbuttons[2].draw(sb);
 
 		}
 
@@ -705,6 +707,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	int war=0;
 	int res=0;
 	int me=0;
+	int unf=0,mf=0;
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		res = 0;
@@ -723,12 +726,12 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		if(buttons[0].isPressed(touchPos)){
 			bflag = 1;
 			System.out.println("Vol pressed");
-			if (vol == true){
+			if (vol == true) {
 				vol = false;
 
 				com.cgossip.psyphysics.main.Game.rainMusic.pause();
 				buttons[0] = new Button(soundoff);
-				buttons[0].setPos(20, 400);
+				buttons[0].setPos(18, 400);
 			}
 			else {
 				vol = true;
@@ -739,23 +742,29 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 			return true;
 		}
 		if(buttons[1].isPressed(touchPos)){
+			buttons[1] = new Button(backoff);
+			buttons[1].setPos(660, 400);
 			bflag = 1;
-			System.out.println("Undo pressed");
-			if (all.size() > 0)
-				flag = 0;
-			if (flag==0) { //it's the 'D' key
-				world.destroyBody(all.get(all.size() - 1));
-				all.remove(all.size() - 1);
-				//tall.remove(tall.size() - 1);
-				if(all.size()<=0)
-					flag=1;
-				spriteall.remove(spriteall.size() - 1);
-			}
+			unf=1;
+
 			return true;
 		}
+		/*
+		buttons = new Button[5];
+		buttons[0] = new Button(soundon);
+		buttons[0].setPos(18, 400);
+		buttons[1] = new Button(back);
+		buttons[1].setPos(660, 400);
+		buttons[2] = new Button(menu);
+		buttons[2].setPos(735, 400);
+
+		 */
 		if(buttons[2].isPressed(touchPos)){
 			bflag = 1;
 			dialog = 1;
+			mf=1;
+			buttons[2] = new Button(menup);
+			buttons[2].setPos(735, 400);
 			System.out.println("Play Dialog pressed");
 			//gsm.setState(GameStateManager.SELECTLEVEL);
 			return true;
@@ -763,7 +772,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		if(dbuttons[0].isPressed(touchPos) && dialog==1){
 			System.out.println("Restart pressed");
 			dbuttons[0] = new Button(reson);
-			dbuttons[0].setPos(150,165);
+			dbuttons[0].setPos(280,210);
 			res=1;
 			//gsm.setState(GameStateManager.PLAY);
 			return true;
@@ -771,7 +780,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		if(dbuttons[1].isPressed(touchPos) && dialog==1){
 			System.out.println("Menu pressed");
 			dbuttons[1] = new Button(menuon);
-			dbuttons[1].setPos(400,152);
+			dbuttons[1].setPos(450,210);
 			me=1;
 			//gsm.setState(GameStateManager.MENU);
 			return true;
@@ -831,6 +840,30 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 
+
+		if(unf==1){
+			buttons[1] = new Button(back);
+			buttons[1].setPos(660, 400);
+			System.out.println("Undo pressed");
+			if (all.size() > 0)
+				flag = 0;
+			if (flag==0) { //it's the 'D' key
+				world.destroyBody(all.get(all.size() - 1));
+				all.remove(all.size() - 1);
+				//tall.remove(tall.size() - 1);
+				if(all.size()<=0)
+					flag=1;
+				spriteall.remove(spriteall.size() - 1);
+			}
+
+			unf=0;
+			return true;
+		}
+		if(mf==1){
+			buttons[2] = new Button(menu);
+			buttons[2].setPos(735, 400);
+			mf=0;
+		}
 		if (bflag == 1)
 			return false;
 		if (res == 1) {
@@ -850,7 +883,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		touchPos.y = touchPos.y * com.cgossip.psyphysics.handlers.B2DVars.PPM;
 		System.out.println("Touch "+touchPos.x + " " + touchPos.y);
 
-		if (buttonc.isPressed(touchPos) && dialog == 1){
+		if (dbuttons[2].isPressed(touchPos) && dialog == 1){
 			System.out.println("Close");
 			dialog=0;
 			return true;
