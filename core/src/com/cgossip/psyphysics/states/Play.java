@@ -141,16 +141,13 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 										e.printStackTrace();
 									}
 								}
-								GameStateManager.setCURLEVEL(GameStateManager.getCURLEVEL() + 1);
-								gsm.setState(GameStateManager.PLAY);
-
-
+								//GameStateManager.setCURLEVEL(GameStateManager.getCURLEVEL() + 1);
+								//gsm.setState(GameStateManager.PLAY);
+								gsm.setState(GameStateManager.LEVELCLEAR);
 							}
 						}
 					}, 3);
 				}
-
-
 			}
 
 			@Override
@@ -258,6 +255,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	private Texture dialogback;
 	private TextureRegion close;
 	private ShaderProgram shader;
+	public static int score;
 	public Play(GameStateManager gsm) {
 
 		super(gsm);
@@ -600,7 +598,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 
 		}
 		if(pass==1){
-			sb.draw(end, 0, 0);
+			//sb.draw(end, 0, 0);
 
 		}
 
@@ -609,7 +607,9 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		//System.out.println("Did");
 
 		//pixmaptex.dispose();
-		font.draw(sb,String.valueOf(10 - all.size()), 10, 50);
+		score = 10 - all.size();
+		GameStateManager.setScore(score);
+		font.draw(sb,String.valueOf(score), 10, 50);
 		//System.out.println(war);
 		if(war>0){
 
@@ -806,7 +806,11 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 			//gsm.setState(GameStateManager.MENU);
 			return true;
 		}
-
+		if (dbuttons[2].isPressed(touchPos) && dialog == 1){
+			System.out.println("Close");
+			dialog=0;
+			return true;
+		}
 
 		Vector3 touch = new Vector3();
 
@@ -843,8 +847,8 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	boolean vol = true;
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-
-
+		if (dialog == 1)
+			return false;
 		if(unf==1){
 			buttons[1] = new Button(back);
 			buttons[1].setPos(660, 400);
@@ -888,11 +892,6 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		touchPos.y = touchPos.y * com.cgossip.psyphysics.handlers.B2DVars.PPM;
 		System.out.println("Touch "+touchPos.x + " " + touchPos.y);
 
-		if (dbuttons[2].isPressed(touchPos) && dialog == 1){
-			System.out.println("Close");
-			dialog=0;
-			return true;
-		}
 		if (dialog == 0) {
 			Vector3 touch = new Vector3();
 			dirty = 0;
@@ -911,7 +910,10 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 				war = 100;
 				return true;
 			}
-			drawLerped(new Vector2((int) last.x, height - (int) last.y), new Vector2(x, height - y));
+			try {
+				drawLerped(new Vector2((int) last.x, height - (int) last.y), new Vector2(x, height - y));
+			}
+			catch (Exception e){}
 			//pixmap.scaled(1000, 600);
 			// pixmap.scale
 			if (bbs != null) {
