@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -66,6 +67,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	private OrthographicCamera camera;
 	int width,height;
 	int hogaya=1;
+	private FileHandle vertexShader, fragmentShader;
 	public synchronized boolean dowork()throws Exception{
 
 		int a=GameStateManager.getCURLEVEL()+1;
@@ -255,7 +257,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	private Skin textSkin,dtskin;
 	private Texture dialogback;
 	private TextureRegion close;
-
+	private ShaderProgram shader;
 	public Play(GameStateManager gsm) {
 
 		super(gsm);
@@ -265,14 +267,33 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		textSkin.addRegions(textatlas);
 		font = new BitmapFont(Gdx.files.internal("dataa/limit.fnt"),false); //** font **//
 		font.setColor(0, 0, 0, 1);
-		lfont = new BitmapFont(Gdx.files.internal("dataa/bb.fnt"),false);
-		lfont.setColor(255, 0, 0, 1);
+		lfont = new BitmapFont(Gdx.files.internal("newui/war.fnt"),false);
+		//lfont.setColor(255, 0, 0, 1);
 		soundon=new TextureRegion(new Texture(Gdx.files.internal("newui/volumeon.png")));
 		soundoff=new TextureRegion(new Texture(Gdx.files.internal("newui/mute.png")));
 		back = new TextureRegion(new Texture(Gdx.files.internal("newui/undo.png")));
 		backoff= new TextureRegion(new Texture(Gdx.files.internal("newui/undopressed.png")));
 		menu=new TextureRegion(new Texture(Gdx.files.internal("newui/menu.png")));
 		menup=new TextureRegion(new Texture(Gdx.files.internal("newui/menupressed.png")));
+
+		vertexShader = Gdx.files.internal("vertex.glsl");
+		fragmentShader = Gdx.files.internal("fragment.glsl");
+		shader = new ShaderProgram(vertexShader, fragmentShader);
+		if (!shader.isCompiled()) {
+			Gdx.app.log("Shader", shader.getLog());
+			Gdx.app.exit();
+		}
+		sb = new SpriteBatch();
+		sb.setShader(shader);
+		shader.begin();
+		shader.setUniformi("u_texture", 0);
+		shader.setUniformi("u_mask", 1);
+		shader.end();
+
+		/* Pixmap blending can result result in some funky looking lines when
+		 * drawing. You may need to disable it. */
+		Pixmap.setBlending(Pixmap.Blending.None);
+
 
 		buttons = new Button[5];
 		buttons[0] = new Button(soundon);
@@ -421,7 +442,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		b2dCam = new OrthographicCamera();
 		b2dCam.setToOrtho(false, com.cgossip.psyphysics.main.Game.V_WIDTH / com.cgossip.psyphysics.handlers.B2DVars.PPM, com.cgossip.psyphysics.main.Game.V_HEIGHT / com.cgossip.psyphysics.handlers.B2DVars.PPM);
 		//viewport = new FitViewport(Game.V_WIDTH / PPM, Game.V_HEIGHT / PPM, b2dCam);
-		sb = new SpriteBatch();
+
 		Gdx.input.setInputProcessor(this);
 
 
@@ -588,11 +609,11 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		//System.out.println("Did");
 
 		//pixmaptex.dispose();
-		font.draw(sb, String.valueOf(10 - all.size()), 10, 50);
+		font.draw(sb,String.valueOf(10 - all.size()), 10, 50);
 		//System.out.println(war);
 		if(war>0){
 
-			lfont.draw(sb, warning.get(0), 400 - warning.get(0).length() * 10, 330);
+			lfont.draw(sb, warning.get(0), 335 - warning.get(0).length() * 10, 330);
 			//System.out.println(Gdx.graphics.getDeltaTime()+" "+war);
 			war-=Gdx.graphics.getDeltaTime()*.0001;
 			if(war<=0)
@@ -1020,7 +1041,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		float dist = to.dst(from);
          /* Calc an alpha step to put one dot roughly every 1/8 of the brush
           * radius. 1/8 is arbitrary, but the results are fairly nice. */
-		float alphaStep = brushSize / (8f * dist);
+		float alphaStep = brushSize / (20f * dist);
 
 		for (float a = 0; a < 1f; a += alphaStep) {
 			Vector2 lerped = from.lerp(to, a);
