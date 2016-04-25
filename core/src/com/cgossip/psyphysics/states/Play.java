@@ -36,7 +36,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.cgossip.psyphysics.handlers.GameStateManager;
 import com.cgossip.psyphysics.view.Button;
@@ -658,7 +658,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	public void create() {
 
 		cam = new OrthographicCamera();
-		viewport = new FitViewport(com.cgossip.psyphysics.main.Game.V_WIDTH, com.cgossip.psyphysics.main.Game.V_HEIGHT,cam);
+		viewport = new FillViewport(com.cgossip.psyphysics.main.Game.V_WIDTH, com.cgossip.psyphysics.main.Game.V_HEIGHT,cam);
 		viewport.apply();
 
 	}

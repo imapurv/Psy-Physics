@@ -11,7 +11,7 @@
         android:allowBackup="true"
         android:icon="@drawable/logo"
         android:label="@string/app_name"
-        
+        android:screenOrientation="landscape"
         android:theme="@style/GdxTheme" >
         <activity
             android:name="com.cgossip.psyphysics.AndroidLauncher"
