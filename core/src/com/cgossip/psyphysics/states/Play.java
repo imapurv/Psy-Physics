@@ -815,26 +815,9 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		testPoint.set(x, y, 0);
 		b2dCam.unproject(testPoint);
 
-		// ask the world which bodies are within the given
-		// bounding box around the mouse pointer
-		hitBody = null;
-		world.QueryAABB(callback, testPoint.x - 0.1f, testPoint.y - 0.1f, testPoint.x + 0.1f, testPoint.y + 0.1f);
 
-		if (hitBody != null) {
-			//System.out.println("Found Body");
-			//hitBody.applyForceToCenter(new Vector2(-5, 0), true);
-         /*
-         Array<Body> bodies = new Array<Body>();
-         world.getBodies(bodies);
-             for(Body b : bodies){
-                 if(b.getPosition().y<-20f){
-              world.destroyBody(b);
-           }
-             }
-          */
-			//world.destroyBody(hitBody);
-		}
-		// System.out.println("Ready ::" + touch.x * PPM + " " + touch.y * PPM);
+
+
 		last = new Vector2(touch.x * com.cgossip.psyphysics.handlers.B2DVars.PPM, touch.y * com.cgossip.psyphysics.handlers.B2DVars.PPM);
 		touch.x = touch.x * com.cgossip.psyphysics.handlers.B2DVars.PPM;
 		touch.y = touch.y * com.cgossip.psyphysics.handlers.B2DVars.PPM;
@@ -884,6 +867,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 			buttons[2] = new Button(menu);
 			buttons[2].setPos(735, 400);
 			mf=0;
+			return true;
 		}
 		if (bflag == 1)
 			return false;
