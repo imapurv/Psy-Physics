@@ -42,7 +42,7 @@ public class selectLevel extends GameState implements InputProcessor,Application
     private Texture background,buton,butoff,ontop;
     Texture close;
     Skin skin;
-    BitmapFont font;
+    BitmapFont font,gfont;
     public static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"´`'<>";
     public selectLevel(final GameStateManager gsm) {
         super(gsm);
@@ -59,10 +59,12 @@ public class selectLevel extends GameState implements InputProcessor,Application
         textatlas = new TextureAtlas("dataa/text.atlas");
        // textSkin= new Skin();
        // textSkin.addRegions(textatlas);
-        font = new BitmapFont(Gdx.files.internal("newui/skikaria.fnt"),false); //** font **//
+        font = new BitmapFont(Gdx.files.internal("newui/skikaria.fnt"),false);
+        gfont = new BitmapFont(Gdx.files.internal("newui/grey.fnt"),false);//** font **//
        // font = TrueTypeFontFactory.createBitmapFont(Gdx.files.internal("dataa/crayon.ttf"), FONT_CHARACTERS, 12.5f, 7.5f, 1.0f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         font.setColor(1f, 1f, 1f, 1f);
-        //font.getData().setScale(1,1);
+        font.getData().setScale((float)0.75,(float)0.75);
+        gfont.getData().setScale((float)0.75,(float)0.75);
 
         /*
         FileWriter file = null;
@@ -128,26 +130,36 @@ public class selectLevel extends GameState implements InputProcessor,Application
         style.down = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("newui/buttonpressed.png"))));
         style.font = font;
 
-        button = new TextButton[lvl+1];
-        buttons = new Button [lvl+1];
+        TextButton.TextButtonStyle lstyle = new TextButton.TextButtonStyle(); //** Button properties **//
+        lstyle.up = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("newui/lock.png"))));
+        //lstyle.down = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("newui/buttonpressed.png"))));
+        lstyle.font = gfont;
+
+        button = new TextButton[15+1];
+        buttons = new Button [15+1];
         int pre=140;
         int next=270;
-        for(int i=0;i<lvl;i++){
+        for(int i=0;i<15;i++){
             final int g=i;
-            button[i]= new TextButton(""+(i+1)+"",style);
+            if (i>=lvl)
+                button[i]= new TextButton(""+(i+1)+"",lstyle);
+            else
+                button[i]= new TextButton(""+(i+1)+"",style);
             button[i].setHeight(80); //** Button Height **//
             button[i].setWidth(85); //** Button Width **//
             button[i].setPosition(pre,next);
-            button[i].addListener(new InputListener() {
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return true;
-                }
+            if (i<lvl) {
+                button[i].addListener(new InputListener() {
+                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                        return true;
+                    }
 
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    GameStateManager.setCURLEVEL(g + 1);
-                    gsm.setState(GameStateManager.PLAY);
-                }
-            });
+                    public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                        GameStateManager.setCURLEVEL(g + 1);
+                        gsm.setState(GameStateManager.PLAY);
+                    }
+                });
+            }
             pre+=102;
             if((i+1)%5==0){
                 next-=85;
