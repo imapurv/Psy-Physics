@@ -216,7 +216,7 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         buttons[0].setPos(350,220);
         buttons[1] = new Button(credit);
         buttons[1].setPos(7,22);
-        drawFrames = new TextureRegion[25];
+        drawFrames = new TextureRegion[32];
         drawFramesmenu = new TextureRegion[14];
         buttons[2] = new Button(exit);
         buttons[2].setPos(583,22);
@@ -228,14 +228,12 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         buttons[5].setPos(10,400);
 
 
-        for(int i=1;i<=25;i++){
-            drawFrames[i-1]=new TextureRegion(new Texture(Gdx.files.internal("anim/"+i+".png")));
+        for(int i=0;i<=31;i++){
+            drawFrames[i]=new TextureRegion(new Texture(Gdx.files.internal("animm/Untitled-"+i+".png")));
         }
-        for(int i=1;i<=14;i++){
-            drawFramesmenu[i-1]=new TextureRegion(new Texture(Gdx.files.internal("animm/"+i+".png")));
-        }
-        drawAnimation = new Animation(0.15f, drawFrames);
-        drawAnimationm = new Animation(0.15f, drawFramesmenu);
+
+        drawAnimation = new Animation(0.20f, drawFrames);
+
         // TextureRegionDrawable trd=new TextureRegionDrawable(new TextureRegion(new Texture(textSkin.get("backgroundtext"))));
 
         // Stack stack = new Stack();
@@ -284,7 +282,7 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stateTime += Gdx.graphics.getDeltaTime();           // #15
         currentFrame = drawAnimation.getKeyFrame(stateTime, true);
-        currentFrame2 = drawAnimationm.getKeyFrame(stateTime, true);// #16
+
         stage.act();
         sb.begin();
 
@@ -297,11 +295,8 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
 
 
 
-        sb.draw(currentFrame, 50, 50, 500,200);
-        if(flags==1)
-        if(currentFrame2.equals(drawFramesmenu[13])){
-            flags=0;
-        }
+        sb.draw(currentFrame,0,0);
+
        // if(flags==1)
         //sb.draw(currentFrame2,0,0);
         //else {
