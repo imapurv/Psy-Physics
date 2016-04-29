@@ -67,6 +67,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	private OrthographicCamera camera;
 	int width,height;
 	int hogaya=1;
+	int sscore=0;
 	private FileHandle vertexShader, fragmentShader;
 	public synchronized boolean dowork()throws Exception{
 
@@ -208,6 +209,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		System.out.println("Created");
 		undo.push(body);
 		all.add(body);
+		sscore++;
 		return body;
 	}
 	void ColorPush(){
@@ -608,7 +610,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 
 		//pixmaptex.dispose();
 		score = 10 - all.size();
-		GameStateManager.setScore(score);
+		GameStateManager.setScore(sscore);
 		font.draw(sb,String.valueOf(score), 10, 50);
 		//System.out.println(war);
 		if(war>0){
