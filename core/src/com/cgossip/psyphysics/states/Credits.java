@@ -38,20 +38,8 @@ import com.cgossip.psyphysics.view.Button;
  */
 public class Credits extends GameState implements InputProcessor,ApplicationListener {
 
-
-    private Stage stage; //** stage holds the Button **//
-    private BitmapFont font;
-    private TextureAtlas buttonsAtlas; //** image of buttons **//
-    private Skin buttonSkin,textSkin; //** images are used as skins of the button **//
-    private TextButton button;
-    TextureRegion logo,play,credit,exit;
-    Table root;
     float stateTime;
-    TextureRegion                   currentFrame;           // #7
-    TextureRegion[]                 drawFrames;
     Texture background,wood;
-    Animation drawAnimation;
-    private TextureAtlas textatlas;
     private Viewport viewport;
     private OrthographicCamera camera;
     public Button buttonsc;
@@ -174,7 +162,9 @@ public class Credits extends GameState implements InputProcessor,ApplicationList
         // TODO Auto-generated method stub
         background.dispose();
         wood.dispose();
-
+        tx.getTexture().dispose();
+        ty.getTexture().dispose();
+        back.getTexture().dispose();
     }
 
     @Override

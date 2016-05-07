@@ -94,7 +94,12 @@ public class levelcleared extends GameState implements InputProcessor,Applicatio
 
     @Override
     public void dispose() {
-
+        back.getTexture().dispose();
+        selectl.getTexture().dispose();
+        menu.getTexture().dispose();
+        restart.getTexture().dispose();
+        next.getTexture().dispose();
+        font.dispose();
     }
 
     @Override
