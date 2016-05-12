@@ -586,6 +586,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		if (dirty == 1) {
 			//Pixmap p=pixmap;
 			//System.out.println("Hereee "+p.getHeight()+p.getFormat());
+
 			//pixmaptex= new Texture(p);
 			runtime.draw(pixmap, 0, 0);
 			//pixmap.dispose();
