@@ -356,7 +356,37 @@ public class MainMenu extends GameState implements InputProcessor,ApplicationLis
         // TODO Auto-generated method stub
         background.dispose();
         wood.dispose();
+        logo.getTexture().dispose();
+        play.getTexture().dispose();
+        credit.getTexture().dispose();
+        exit.getTexture().dispose();
+        font.dispose();
+        currentFrame.getTexture().dispose();
+        textatlas.dispose();
+        textSkin.dispose();
+        texte.getTexture().dispose();
+        buttonSkin.dispose();
+        dialogskin.dispose();
+        dialogatlas.dispose();
+        buttonsAtlas.dispose();
+        texte.getTexture().dispose();
+        yesoff.getTexture().dispose();
+        yeson.getTexture().dispose();
+        nooff.getTexture().dispose();
+        noon.getTexture().dispose();
+        exitp.getTexture().dispose();
+        fb.getTexture().dispose();
+        gp.getTexture().dispose();
+        info.getTexture().dispose();
+        infop.getTexture().dispose();
+        ipanel.getTexture().dispose();
+        close.getTexture().dispose();
 
+        for (int i=0;i<drawFrames.length;i++)
+            drawFrames[i].getTexture().dispose();
+
+
+        stage.dispose();
     }
 
     @Override

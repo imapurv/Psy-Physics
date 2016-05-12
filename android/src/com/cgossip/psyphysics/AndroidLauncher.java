@@ -43,6 +43,8 @@ private AdView adView;
 
 	@Override
 	public void exit() {
+		System.out.println("Android exit");
+		System.exit(1);
 	}
 
 	@Override

@@ -39,7 +39,7 @@ public class selectLevel extends GameState implements InputProcessor,Application
     private TextButton button[];
     private Stage stage;
     private OrthographicCamera camera;
-    private Texture background,buton,butoff,ontop;
+    private Texture background,ontop;
     Texture close;
     Skin skin;
     BitmapFont font,gfont;
@@ -50,8 +50,6 @@ public class selectLevel extends GameState implements InputProcessor,Application
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         background =new Texture(Gdx.files.internal("newui/background1.png"));
         ontop=new Texture(Gdx.files.internal("newui/lvlbackground.png"));
-        buton =new Texture(Gdx.files.internal("dataa/buttonon.png"));
-        butoff =new Texture(Gdx.files.internal("dataa/buttonoff.png"));
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, com.cgossip.psyphysics.main.Game.V_WIDTH, com.cgossip.psyphysics.main.Game.V_HEIGHT);
@@ -226,7 +224,12 @@ public class selectLevel extends GameState implements InputProcessor,Application
 
     @Override
     public void dispose() {
-
+        background.dispose();
+        ontop.dispose();
+        textatlas.dispose();
+        stage.dispose();
+        font.dispose();
+        gfont.dispose();
     }
 
     @Override

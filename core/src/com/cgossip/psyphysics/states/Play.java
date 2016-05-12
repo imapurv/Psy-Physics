@@ -67,6 +67,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 	private OrthographicCamera camera;
 	int width,height;
 	int hogaya=1;
+	int sscore=0;
 	private FileHandle vertexShader, fragmentShader;
 	public synchronized boolean dowork()throws Exception{
 
@@ -208,6 +209,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		System.out.println("Created");
 		undo.push(body);
 		all.add(body);
+		sscore++;
 		return body;
 	}
 	void ColorPush(){
@@ -609,7 +611,7 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 
 		//pixmaptex.dispose();
 		score = 10 - all.size();
-		GameStateManager.setScore(score);
+		GameStateManager.setScore(sscore);
 		font.draw(sb,String.valueOf(score), 10, 50);
 		//System.out.println(war);
 		if(war>0){
@@ -652,6 +654,27 @@ public class Play extends GameState implements InputProcessor,ApplicationListene
 		try {
 			runtime.dispose();
 		}catch (Exception e){}
+		soundon.getTexture().dispose();
+		soundoff.getTexture().dispose();
+		back.getTexture().dispose();
+		menu.getTexture().dispose();
+		resoff.getTexture().dispose();
+		reson.getTexture().dispose();
+		menuoff.getTexture().dispose();
+		menuon.getTexture().dispose();
+		tex.getTexture().dispose();
+		backoff.getTexture().dispose();
+		menup.getTexture().dispose();
+		ball.dispose();
+		tstar.dispose();
+		dtatlas.dispose();
+		textatlas.dispose();
+		textSkin.dispose();
+		dtskin.dispose();
+		font.dispose();
+		lfont.dispose();
+		close.getTexture().dispose();
+		img.dispose();
 
 	}
 	Texture end;

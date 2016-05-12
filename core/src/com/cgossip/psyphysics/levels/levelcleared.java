@@ -47,8 +47,7 @@ public class levelcleared extends GameState implements InputProcessor,Applicatio
         buttons[1].setPos(360, 45);
         buttons[2] = new Button(next);
         buttons[2].setPos(460, 45);
-
-        s="Score :  "+ GameStateManager.getScore();
+        s="Score :  "+ (102-2*GameStateManager.getScore());
         Gdx.input.setInputProcessor(this);
     }
 
@@ -95,7 +94,12 @@ public class levelcleared extends GameState implements InputProcessor,Applicatio
 
     @Override
     public void dispose() {
-
+        back.getTexture().dispose();
+        selectl.getTexture().dispose();
+        menu.getTexture().dispose();
+        restart.getTexture().dispose();
+        next.getTexture().dispose();
+        font.dispose();
     }
 
     @Override
